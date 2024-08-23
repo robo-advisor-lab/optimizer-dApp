@@ -49,3 +49,15 @@ def set_random_seed(seed):
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
+
+def to_time(df):
+    time_cols = ['date','dt','hour','time','day','month','year','week','timestamp','date(utc)','block_timestamp']
+    for col in df.columns:
+        if col.lower() in time_cols and col.lower() != 'timestamp':
+            df[col] = pd.to_datetime(df[col])
+            df.set_index(col, inplace=True)
+        elif col.lower() == 'timestamp':
+            df[col] = pd.to_datetime(df[col], unit='ms')
+            df.set_index(col, inplace=True)
+    print(df.index)
+    return df 
