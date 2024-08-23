@@ -61,3 +61,15 @@ def to_time(df):
             df.set_index(col, inplace=True)
     print(df.index)
     return df 
+
+def clean_prices(prices_df):
+    prices_df_pivot = prices_df.pivot(
+        index='hour',
+        columns='symbol',
+        values='price'
+        )
+    prices_df_pivot = prices_df_pivot.reset_index()
+    prices_df_pivot.columns = [f'{col[0]}_{col[1]}' for col in prices_df_pivot.columns]
+    prices_df_pivot.rename(columns={"h_o":"dt","W_B":"BTC Price","W_E":"ETH Price"}, inplace=True)
+
+    return prices_df_pivot
