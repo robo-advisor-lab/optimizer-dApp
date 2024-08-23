@@ -1,5 +1,5 @@
 import pandas as pd
-import flipside as Flipside
+from flipside import Flipside
 import random
 import numpy as np
 import torch 
