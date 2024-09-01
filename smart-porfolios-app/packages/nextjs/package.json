@@ -5,7 +5,9 @@
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit --incremental",
-    "dev": "next dev",
+    "dev": "concurrently \"yarn next-dev\" \"yarn flask-dev\"",
+    "flask-dev": "FLASK_DEBUG=1 pip3 install -r requirements.txt && python3 -m flask --app api/index run -p 5328",
+    "next-dev": "next dev",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "lint": "next lint",
     "serve": "next start",
@@ -37,6 +39,7 @@
     "zustand": "~4.1.2"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.2.6",
     "@trivago/prettier-plugin-sort-imports": "~4.1.1",
     "@types/node": "^17.0.45",
     "@types/nprogress": "^0",
@@ -45,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "~5.40.0",
     "abitype": "1.0.5",
     "autoprefixer": "~10.4.12",
+    "concurrently": "^8.0.1",
     "eslint": "~8.24.0",
     "eslint-config-next": "~14.0.4",
     "eslint-config-prettier": "~8.5.0",

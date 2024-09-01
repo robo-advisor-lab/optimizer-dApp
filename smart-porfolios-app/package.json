@@ -8,6 +8,9 @@
     ]
   },
   "scripts": {
+    "flask-dev": "yarn workspace @se-2/nextjs flask-dev",
+    "next-dev": "yarn workspace @se-2/nextjs next-dev",
+    "dev": "concurrently \"yarn next-dev\" \"yarn flask-dev\"",
     "account": "yarn workspace @se-2/hardhat account",
     "chain": "yarn workspace @se-2/hardhat chain",
     "compile": "yarn workspace @se-2/hardhat compile",
@@ -35,6 +38,7 @@
     "verify": "yarn workspace @se-2/hardhat verify"
   },
   "devDependencies": {
+    "concurrently": "^8.0.1",
     "husky": "~8.0.3",
     "lint-staged": "~13.2.2"
   },
