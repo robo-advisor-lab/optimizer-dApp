@@ -1,3 +1,30 @@
+---
+ETHonline24/
+├── PLP/
+│   ├── __init__.py
+│   ├── data/
+│   │   └── rwa_private_loans.csv
+│   ├── notebooks/
+│   │   └── exploratory_analysis.ipynb
+│   ├── private_loans_portfolio.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── preprocess.py
+│   │   ├── simulation.py
+│   │   ├── optimization.py
+│   │   ├── visualization.py
+│   │   └── risk_management.py
+│   ├── tests/
+│   │   ├── __init__.py
+│   │   ├── test_preprocess.py
+│   │   ├── test_simulation.py
+│   │   ├── test_optimization.py
+│   │   ├── test_visualization.py
+│   │   └── test_risk_management.py
+│   ├── requirements.txt
+│   └── README.md
+└── run.py
+---
 # RWA Financial Model
 
 # Construction of Self-Financing Replicating Portfolio for Valuation of Tokenized Debt Obligations

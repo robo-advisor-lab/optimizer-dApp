@@ -1,9 +1,9 @@
 import pandas as pd
-from .utils import preprocess, simulation, optimization, visualization, risk_management
+from PLP.utils import preprocess, simulation, optimization, visualization, risk_management
 
 def main():
     # Cargar los datos
-    df = preprocess.load_data('PLP/data/rwa_private_loans.csv')
+    df = preprocess.load_data('ETHonline24/PLP/data/rwa_private_loans.csv')
 
     # Preprocesar los datos
     df = preprocess.preprocess_data(df)
