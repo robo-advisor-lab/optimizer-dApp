@@ -2,3 +2,5 @@ pandas
 numpy
 scipy
 matplotlib
+pytest
+unittest

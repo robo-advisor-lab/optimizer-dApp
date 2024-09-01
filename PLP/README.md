@@ -4,6 +4,7 @@ ETHonline24/
 │   ├── __init__.py
 │   ├── data/
 │   │   └── rwa_private_loans.csv
+│   │   └── rwa_private_loans_sample.csv
 │   ├── notebooks/
 │   │   └── exploratory_analysis.ipynb
 │   ├── private_loans_portfolio.py
