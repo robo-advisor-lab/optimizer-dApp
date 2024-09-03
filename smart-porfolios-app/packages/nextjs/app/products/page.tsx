@@ -9,7 +9,9 @@ const page = () => {
           <div>
             <h1 className="text-5xl font-bold">Optimize Your Portfolio Today</h1>
             <p className="py-6">"Join the DeFi Revolution"</p>
-            <button className="btn btn-primary">Get Started</button>
+            <a href="/information">
+              <button className="btn btn-primary">Get Started</button>
+            </a>
           </div>
         </div>
       </div>

@@ -25,16 +25,6 @@ const Home: NextPage = () => {
             <p className="text-center  block text-2xl font-bold">
               <h1> "Explore Data-Driven DeFi Investing" </h1>
             </p>
-            <p className="text-center text-lg">
-              Edit your smart contract{" "}
-              <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-                YourContract.sol
-              </code>{" "}
-              in{" "}
-              <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-                packages/hardhat/contracts
-              </code>
-            </p>
           </div>
         </div>
         <div className="px-5">
