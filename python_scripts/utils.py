@@ -2,7 +2,8 @@ import pandas as pd
 from flipside import Flipside
 import random
 import numpy as np
-# import torch 
+import torch 
+import tensorflow
 
 def flipside_api_results(query, api_key):
   
@@ -45,10 +46,13 @@ def flipside_api_results(query, api_key):
 def set_random_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
-    # torch.manual_seed(seed)
-    # if torch.cuda.is_available():
-    #     torch.cuda.manual_seed(seed)
-    #     torch.cuda.manual_seed_all(seed)
+    torch.manual_seed(seed)
+    tensorflow.random.set_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
 def to_time(df):
     time_cols = ['date','dt','hour','time','day','month','year','week','timestamp','date(utc)','block_timestamp']
@@ -73,3 +77,36 @@ def clean_prices(prices_df):
     prices_df_pivot.rename(columns={"h_o":"dt","W_B":"BTC Price","W_E":"ETH Price"}, inplace=True)
 
     return prices_df_pivot
+
+def calculate_cumulative_return(portfolio_values_df, col):
+    """
+    Calculate the cumulative return of the portfolio.
+    
+    Parameters:
+    portfolio_values_df (pd.DataFrame): DataFrame with 'Portfolio_Value' column
+    
+    Returns:
+    float: Cumulative return of the portfolio
+    """
+    initial_value = portfolio_values_df[col].iloc[0]
+    final_value = portfolio_values_df[col].iloc[-1]
+    cumulative_return = (final_value / initial_value) - 1
+    return cumulative_return
+
+def calculate_cagr(history):
+    #print(f'cagr history {history}')
+    initial_value = history.iloc[0]
+    #print(f'cagr initial value {initial_value}')
+    final_value = history.iloc[-1]
+    #print(f'cagr final value {final_value}')
+    number_of_hours = (history.index[-1] - history.index[0]).total_seconds() / 3600
+    #print(f'cagr number of hours {number_of_hours}')
+    number_of_years = number_of_hours / (365.25 * 24)  # Convert hours to years
+    #print(f'cagr number of years {number_of_years}')
+
+    if number_of_years == 0:
+        return 0
+
+    cagr = (final_value / initial_value) ** (1 / number_of_years) - 1
+    cagr_percentage = cagr * 100
+    return cagr
