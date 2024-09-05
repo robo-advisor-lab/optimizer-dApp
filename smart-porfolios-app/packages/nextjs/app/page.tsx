@@ -38,7 +38,7 @@ const Home: NextPage = () => {
               </h2>
 
               <div className="card-actions">
-                <a href="/products">
+                <a href="/information">
                   <button className="btn btn-primary">Buy Now</button>
                 </a>
               </div>

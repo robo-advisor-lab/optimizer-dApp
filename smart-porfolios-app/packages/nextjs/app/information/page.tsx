@@ -33,7 +33,9 @@ const page = () => {
             <h2 className="card-title">BTC/ETH</h2>
             <p>For traditional and institutional investors</p>
             <div className="card-actions justify-end">
-              <button className="btn btn-primary">Buy Now</button>
+              <a href="/products">
+                <button className="btn btn-primary">Buy Now</button>
+              </a>
             </div>
           </div>
         </div>
