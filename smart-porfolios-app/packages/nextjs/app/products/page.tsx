@@ -27,12 +27,14 @@ export default function Home() {
       <main className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Primera fila */}
-          <div className="bg-gray-800 rounded-lg shadow p-4 col-span-3"></div>
-          <div className="bg-gray-800 rounded-lg shadow p-4 ">
+          <div className="bg-gray-800 rounded-lg shadow p-4 col-span-3">
+            <h1 className="font-bold text-ellipsis">Historical returns</h1>
+          </div>
+          <div className="bg-gray-800 rounded-lg shadow p-4  ">
             <h1>Summary</h1>
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 ">
               <div
-                className="radial-progress"
+                className="radial-progress bg-cyan-500"
                 style={{ "--value": "70", "--size": "12rem", "--thickness": "2px" }}
                 role="progressbar"
               >
@@ -52,20 +54,21 @@ export default function Home() {
                 <div className="stat-figure text-primary">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
+                    width="24"
+                    height="24"
                     viewBox="0 0 24 24"
-                    className="inline-block h-8 w-8 stroke-current"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="feather feather-check"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    ></path>
+                    <polyline points="20 6 9 17 4 12"></polyline>
                   </svg>
                 </div>
-                <div className="stat-title">Total Likes</div>
-                <div className="stat-value text-primary">25.6K</div>
+                <div className="stat-title">risk aversion</div>
+                <div className="stat-value text-primary"></div>
                 <div className="stat-desc">21% more than last month</div>
 
                 <div className="rating">
@@ -78,8 +81,16 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="bg-gray-800 rounded-lg shadow p-4"></div>
-          <div className="bg-gray-800 rounded-lg shadow p-4 col-span-2 items-center justify-center"></div>
+
+          <div className="bg-gray-800 rounded-lg shadow p-4">
+            <div className="indicator">
+              <span className="indicator-item badge badge-secondary"></span>
+              <div className="bg-base-300 grid h-32 w-32 place-items-center">content</div>
+            </div>
+          </div>
+          <div className="bg-gray-800 rounded-lg shadow p-4 col-span-2 ">
+            <progress className="progress w-56 bg-cyan-500 top-24" value={0} max="100"></progress>
+          </div>
         </div>
       </main>
     </div>
