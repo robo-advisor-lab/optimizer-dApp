@@ -17,90 +17,14 @@ order by
 volume = """
 
 select
-  dt,
-  sum(volume) as volume
+  date_trunc('hour', block_timestamp) as dt,
+  coalesce(sum(AMOUNT_IN_USD), 0) as volume
 from
-  (
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      ethereum.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      arbitrum.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      optimism.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      base.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      polygon.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(SWAP_FROM_AMOUNT_USD) as volume
-    from
-      solana.defi.ez_dex_swaps
-    where
-      SWAP_FROM_AMOUNT_USD is not null
-    group by
-      1
-    union
-    all
-    select
-      date_trunc('hour', block_timestamp) as dt,
-      sum(AMOUNT_IN_USD) as volume
-    from
-      avalanche.defi.ez_dex_swaps
-    where
-      AMOUNT_IN_USD is not null
-    group by
-      1
-  )
+  crosschain.defi.ez_dex_swaps
 group by
-  1
+  date_trunc('hour', block_timestamp)
 order by
-  dt desc
+  1 asc
 
 
 """
