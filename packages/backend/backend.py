@@ -23,7 +23,6 @@ from datetime import timedelta
 import pytz  
 import asyncio
 
-
 from sklearn.linear_model import LinearRegression
 import tensorflow as tf
 import torch

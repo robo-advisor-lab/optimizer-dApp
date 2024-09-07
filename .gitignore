@@ -31,3 +31,6 @@ dist
 
 # cli
 dist
+
+# secrets 
+*.env
