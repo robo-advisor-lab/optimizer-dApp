@@ -79,16 +79,16 @@ contract UniswapAdapter is Ownable {
         return amountIn;
     }
 
-    function estimateAmountOut(
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn
-    ) external view returns (uint256 amountOut) {
-        // This is a placeholder. In a real implementation, you would need to query
-        // the Uniswap pool for a quote. This might involve off-chain calculation
-        // or using Uniswap's quoter contract.
-        return amountIn; // This is not accurate, just a placeholder
-    }
+function estimateAmountOut(
+    address /* tokenIn */,
+    address /* tokenOut */,
+    uint256 amountIn
+) external pure returns (uint256 amountOut) {
+    // This is a placeholder. In a real implementation, you would need to query
+    // the Uniswap pool for a quote. This might involve off-chain calculation
+    // or using Uniswap's quoter contract.
+    return amountIn; // This is not accurate, just a placeholder
+}
 
     function rescueTokens(address token, uint256 amount) external onlyOwner {
         IERC20(token).safeTransfer(owner(), amount);

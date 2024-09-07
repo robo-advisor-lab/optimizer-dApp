@@ -12,10 +12,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adraffy/ens-normalize@npm:1.10.1":
+  version: 1.10.1
+  resolution: "@adraffy/ens-normalize@npm:1.10.1"
+  checksum: 0836f394ea256972ec19a0b5e78cb7f5bcdfd48d8a32c7478afc94dd53ae44c04d1aa2303d7f3077b4f3ac2323b1f557ab9188e8059978748fdcd83e04a80dcc
+  languageName: node
+  linkType: hard
+
 "@alloc/quick-lru@npm:^5.2.0":
   version: 5.2.0
   resolution: "@alloc/quick-lru@npm:5.2.0"
   checksum: bdc35758b552bcf045733ac047fb7f9a07c4678b944c641adfbd41f798b4b91fffd0fdc0df2578d9b0afc7b4d636aa6e110ead5d6281a2adc1ab90efd7f057f8
+  languageName: node
+  linkType: hard
+
+"@async-generators/from-emitter@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@async-generators/from-emitter@npm:0.3.0"
+  dependencies:
+    "@async-generators/subject": ^0.4
+    "@async-generators/terminator": ^0.4
+  checksum: 026ee763b8d2b20b6f5e312427fac6d2e3f0c9c9313bbd96042973b253b46bede3d397860608e1819fbc7b394ef74be65b6076b8ee6076d7e85b5bc1d28d376b
+  languageName: node
+  linkType: hard
+
+"@async-generators/subject@npm:^0.4":
+  version: 0.4.0
+  resolution: "@async-generators/subject@npm:0.4.0"
+  dependencies:
+    "@async-generators/terminator": ^0.4.0
+    events: ^1.1.1
+  checksum: 67156b4fa697f56749930a7d12d0cbd91d088d7cbac532e37cc62955441783543fd53a2a1e28ee406d75d0736a9f89bc772629d4d563e1a15ca8b5e7c328bc80
+  languageName: node
+  linkType: hard
+
+"@async-generators/terminator@npm:^0.4, @async-generators/terminator@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@async-generators/terminator@npm:0.4.0"
+  checksum: 957f92801a29b1df04ceec12c02dff5661c33d97be30cac17ad06e6aac70f3d36c624ddc4e49231fa493377946204bdd33c232a8c4b40dd91b3aff0b87638d26
   languageName: node
   linkType: hard
 
@@ -2587,6 +2621,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts@npm:4.9.6":
+  version: 4.9.6
+  resolution: "@openzeppelin/contracts@npm:4.9.6"
+  checksum: 274b6e968268294f12d5ca4f0278f6e6357792c8bb4d76664f83dbdc325f780541538a127e6a6e97e4f018088b42f65952014dec9c745c0fa25081f43ef9c4bf
+  languageName: node
+  linkType: hard
+
 "@openzeppelin/contracts@npm:^5.0.2":
   version: 5.0.2
   resolution: "@openzeppelin/contracts@npm:5.0.2"
@@ -3051,6 +3092,7 @@ __metadata:
     "@mui/x-charts": ^7.16.0
     "@next/bundle-analyzer": ^14.2.6
     "@rainbow-me/rainbowkit": 2.1.2
+    "@tableland/sdk": ^7.2.1
     "@tanstack/react-query": ~5.28.6
     "@trivago/prettier-plugin-sort-imports": ~4.1.1
     "@types/node": ^17.0.45
@@ -3381,6 +3423,35 @@ __metadata:
   dependencies:
     tslib: ^2.4.0
   checksum: 51d7e3d8bd56818c49d6bfbd715f0dbeedc13cf723af41166e45c03e37f109336bbcb57a1f2020f4015957721aeb21e1a7fff281233d797ff7d3dd1f447fa258
+  languageName: node
+  linkType: hard
+
+"@tableland/evm@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "@tableland/evm@npm:6.3.0"
+  dependencies:
+    "@openzeppelin/contracts": 4.9.6
+    ethers: ^6.12.0
+  checksum: faf1a384f753d046210cbe295acf0cee3956a1a7df75c19820ad76ddafa5bde58e4900ebb7ab431bd5bb7faa961a1221eda11062a0905b7a4730e39567663371
+  languageName: node
+  linkType: hard
+
+"@tableland/sdk@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "@tableland/sdk@npm:7.2.1"
+  dependencies:
+    "@async-generators/from-emitter": ^0.3.0
+    "@tableland/evm": ^6.3.0
+    "@tableland/sqlparser": ^1.4.1
+    ethers: ^6.12.1
+  checksum: ca801bd968c1a84deacb15b3ca66cd2d9b5a8431904d57cebbf285b665207575a238243572c4ba5a244d53df9719bddb2d1b2b13897d4a2be7184493c7faa99d
+  languageName: node
+  linkType: hard
+
+"@tableland/sqlparser@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@tableland/sqlparser@npm:1.4.1"
+  checksum: c07fb8682ba93890a3471a9442f1e41838e0e8d7eecbc61a85ed0e4d7645945ac7bb4df2e76fc8ef4810752db33c9787b579d550011b4243984faf07b364a4dc
   languageName: node
   linkType: hard
 
@@ -8463,6 +8534,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ethers@npm:^6.12.0, ethers@npm:^6.12.1":
+  version: 6.13.2
+  resolution: "ethers@npm:6.13.2"
+  dependencies:
+    "@adraffy/ens-normalize": 1.10.1
+    "@noble/curves": 1.2.0
+    "@noble/hashes": 1.3.2
+    "@types/node": 18.15.13
+    aes-js: 4.0.0-beta.5
+    tslib: 2.4.0
+    ws: 8.17.1
+  checksum: 981860c736c7ae121774ad38ea07e3611ce524a77d2fcb77db499b65afe0cbe8f344cd5204d94b68b316349ff770fd2a7d9c8b2039da41c072f98d9864099925
+  languageName: node
+  linkType: hard
+
 "ethers@npm:~6.10.0":
   version: 6.10.0
   resolution: "ethers@npm:6.10.0"
@@ -8530,6 +8616,13 @@ __metadata:
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: f6f487ad2198aa41d878fa31452f1a3c00958f46e9019286ff4787c84aac329332ab45c9cdc8c445928fc6d7ded294b9e005a7fce9426488518017831b272780
+  languageName: node
+  linkType: hard
+
+"events@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "events@npm:1.1.1"
+  checksum: 40431eb005cc4c57861b93d44c2981a49e7feb99df84cf551baed299ceea4444edf7744733f6a6667e942af687359b1f4a87ec1ec4f21d5127dac48a782039b9
   languageName: node
   linkType: hard
 

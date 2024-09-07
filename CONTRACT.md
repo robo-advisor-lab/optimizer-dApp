@@ -1,3 +1,9 @@
+Contracts deployed:
+ChainlinkPriceOracle: 0xD73363b6b0A1cE3Fe374951b1ed5413E820850bC
+MLPredictionOracle: 0xfEda0Bff2688aEDEB9830117809b2C9E33c9177C
+UniswapAdapter: 0x19c144196051b72F40dF0F70a9a48b4e871cD851
+SmartPortfolioManager: 0x65C7A92691ce180c32ac316bB6237EE31595408C
+InvestmentVehicle: 0x61257521c8DB4C14Bd98AB713430804e0ADB18Ca
 ```tla
 ---- MODULE EnhancedFundOperations ----
 EXTENDS Integers, Sequences, FiniteSets, Reals

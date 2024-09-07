@@ -22,10 +22,10 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
   });
 
   // Deploy UniswapAdapter
-  // Note: You'll need to replace 'UNISWAP_ROUTER_ADDRESS' with the actual address of the Uniswap router
+  // Note: You'll need to replace args :['UNISWAP_ROUTER_ADDRESS'] with the actual address of the Uniswap router, currently Sepolia
   const uniswapAdapter = await deploy("UniswapAdapter", {
     from: deployer,
-    args: ["UNISWAP_ROUTER_ADDRESS"],
+    args: ["0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD"],
     log: true,
     autoMine: true,
   });

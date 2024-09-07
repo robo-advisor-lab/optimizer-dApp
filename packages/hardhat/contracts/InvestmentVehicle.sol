@@ -50,37 +50,37 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
         _;
     }
 
-    function rebalance() external onlyManagerOrOwner {
-        require(block.timestamp >= lastRebalance + REBALANCE_INTERVAL, "Rebalance interval not met");
+function rebalance() external onlyManagerOrOwner {
+    require(block.timestamp >= lastRebalance + REBALANCE_INTERVAL, "Rebalance interval not met");
 
-        uint256 predictionTimestamp = mlPredictionOracle.getPredictionTimestamp();
-        require(block.timestamp <= predictionTimestamp + PREDICTION_VALIDITY_PERIOD, "ML prediction is outdated");
+    (uint256 predictionTimestamp, /* bytes32 tablelandHash */) = mlPredictionOracle.getLatestPredictionData();
+    require(block.timestamp <= predictionTimestamp + PREDICTION_VALIDITY_PERIOD, "ML prediction is outdated");
+    
+    uint256 totalValue = getTotalValue();
+
+    for (uint i = 0; i < assets.length; i++) {
+        Asset storage asset = assets[i];
+        (uint256 predictedWeight, , ) = mlPredictionOracle.getPrediction(asset.tokenAddress);
+        uint256 targetValue = (totalValue * predictedWeight) / BASIS_POINTS;
+        uint256 currentValue = getCurrentValue(asset.tokenAddress, asset.balance);
         
-        uint256 totalValue = getTotalValue();
-
-        for (uint i = 0; i < assets.length; i++) {
-            Asset storage asset = assets[i];
-            uint256 predictedWeight = mlPredictionOracle.getPrediction(asset.tokenAddress);
-            uint256 targetValue = (totalValue * predictedWeight) / BASIS_POINTS;
-            uint256 currentValue = getCurrentValue(asset.tokenAddress, asset.balance);
-            
-            if (currentValue > targetValue) {
-                // Sell excess
-                uint256 excessAmount = currentValue - targetValue;
-                swapAsset(asset.tokenAddress, address(assets[0].tokenAddress), excessAmount);
-            } else if (currentValue < targetValue) {
-                // Buy more
-                uint256 deficitAmount = targetValue - currentValue;
-                swapAsset(address(assets[0].tokenAddress), asset.tokenAddress, deficitAmount);
-            }
-
-            // Update the asset weight based on the ML prediction
-            asset.weight = predictedWeight;
+        if (currentValue > targetValue) {
+            // Sell excess
+            uint256 excessAmount = currentValue - targetValue;
+            swapAsset(asset.tokenAddress, address(assets[0].tokenAddress), excessAmount);
+        } else if (currentValue < targetValue) {
+            // Buy more
+            uint256 deficitAmount = targetValue - currentValue;
+            swapAsset(address(assets[0].tokenAddress), asset.tokenAddress, deficitAmount);
         }
 
-        lastRebalance = block.timestamp;
-        emit Rebalanced(lastRebalance);
+        // Update the asset weight based on the ML prediction
+        asset.weight = predictedWeight;
     }
+
+    lastRebalance = block.timestamp;
+    emit Rebalanced(lastRebalance);
+}
 
     function swapAsset(address tokenIn, address tokenOut, uint256 amount) internal {
         IERC20(tokenIn).approve(address(uniswapAdapter), amount);
