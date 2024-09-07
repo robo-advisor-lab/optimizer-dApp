@@ -55,7 +55,19 @@ The terms instrument and investment vehicle are used interchangeably.
 
 If the ML model predicts ETH will outperform BTC, the SC might send an order to the MM to sell a portion of BTC and buy more ETH, adjusting the weights $w_{WETH}(t)$ and $w_{BTC}(t)$ accordingly.
 
+
+**DAO Governance Parameters**
+
+The DAO can vote on the following parameters for each investment vehicle issuance:
+
+- $T_{duration}$: Duration of the vehicle (e.g., 6 months, 1 year, 10 years)
+- $T_{rebalancing}$: Rebalancing frequency (e.g., hourly, daily, weekly, yearly)
+- $n_{tokens}$: Number of tokens to include in the vehicle (e.g., 2, 3, ...)
+- $A_i$: Set of token addresses to include in the vehicle, where $i \in \{1, 2, ..., n_{tokens}\}$
+
+These parameters allow the DAO to adjust the characteristics of each investment vehicle to adapt to different strategies and market conditions.
+
 **Additional Considerations:**
 
-- **Governance:** The DAO can adjust the rebalancing algorithm parameters and token creation/destruction criteria through voting.
+- **Governance:** The DAO can adjust the token creation/destruction criteria through voting.
 - **Fees:** The SC may charge fees for fund management and rebalancing, which will be deducted from the NAV.
