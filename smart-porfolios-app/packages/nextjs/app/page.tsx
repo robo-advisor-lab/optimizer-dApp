@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
@@ -23,14 +24,14 @@ const Home: NextPage = () => {
               <Address address={connectedAddress} />
             </div>
             <p className="text-center  block text-2xl font-bold">
-              <h1> "Explore Data-Driven DeFi Investing" </h1>
+              <h1> Explore Data-Driven DeFi Investing </h1>
             </p>
           </div>
         </div>
         <div className="px-5">
           <div className="card bg-base-100 w-96 shadow-xl">
             <figure className="px-10 pt-10">
-              <img src="/i-4.jpeg" alt="Shoes" className="rounded-xl" />
+              <Image src="/i-4.jpeg" alt="Investing" width={300} height={200} className="rounded-xl" />
             </figure>
             <div className="card-body items-center text-center">
               <h2 className="card-title">
