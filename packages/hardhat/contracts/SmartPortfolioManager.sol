@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
-    using SafeMath for uint256;
 
     enum ProposalType { 
         UpdateManagementFee, 
@@ -67,7 +65,9 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
     event ApprovalThresholdUpdated(uint256 newThreshold);
     event VotingPeriodUpdated(uint256 newPeriod);
 
-    // ... [Other functions as before]
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) Ownable(msg.sender) {
+        // Constructor logic
+    }
 
     function createProposal(ProposalType proposalType, string memory description, bytes memory data) external {
         uint256 proposalId = nextProposalId++;
@@ -76,7 +76,7 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         newProposal.proposalType = proposalType;
         newProposal.description = description;
         newProposal.startTime = block.timestamp;
-        newProposal.endTime = block.timestamp.add(votingPeriod);
+        newProposal.endTime = block.timestamp + votingPeriod;
         newProposal.data = data;
         
         emit ProposalCreated(proposalId, proposalType, description);
@@ -89,9 +89,9 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         
         uint256 votingPower = balanceOf(msg.sender);
         if (support) {
-            proposal.forVotes = proposal.forVotes.add(votingPower);
+            proposal.forVotes += votingPower;
         } else {
-            proposal.againstVotes = proposal.againstVotes.add(votingPower);
+            proposal.againstVotes += votingPower;
         }
         proposal.hasVoted[msg.sender] = true;
         
@@ -103,11 +103,11 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         require(block.timestamp > proposal.endTime, "Voting period not ended");
         require(!proposal.executed, "Proposal already executed");
         
-        uint256 totalVotes = proposal.forVotes.add(proposal.againstVotes);
-        uint256 quorum = (totalSupply().mul(quorumThreshold)).div(100);
+        uint256 totalVotes = proposal.forVotes + proposal.againstVotes;
+        uint256 quorum = (totalSupply() * quorumThreshold) / 100;
         require(totalVotes >= quorum, "Quorum not reached");
         
-        uint256 approvalRate = (proposal.forVotes.mul(100)).div(totalVotes);
+        uint256 approvalRate = (proposal.forVotes * 100) / totalVotes;
         require(approvalRate >= approvalThreshold, "Proposal not approved");
         
         proposal.executed = true;
@@ -148,5 +148,5 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         emit ProposalExecuted(proposalId);
     }
 
-    // ... [Other helper functions and admin functions]
+    // Additional helper functions and admin functions would be implemented here
 }

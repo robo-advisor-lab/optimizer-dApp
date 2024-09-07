@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -17,7 +17,7 @@ contract UniswapAdapter is Ownable {
 
     event Swapped(address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
 
-    constructor(ISwapRouter _swapRouter) {
+    constructor(ISwapRouter _swapRouter) Ownable(msg.sender) {
         swapRouter = _swapRouter;
     }
 

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract MLPredictionOracle is AccessControl, Pausable {
     bytes32 public constant UPDATER_ROLE = keccak256("UPDATER_ROLE");
@@ -18,8 +18,8 @@ contract MLPredictionOracle is AccessControl, Pausable {
     event PredictionUpdated(uint256 timestamp);
 
     constructor() {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(UPDATER_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPDATER_ROLE, msg.sender);
     }
 
     function updatePrediction(address[] memory assets, uint256[] memory weights) external onlyRole(UPDATER_ROLE) whenNotPaused {
