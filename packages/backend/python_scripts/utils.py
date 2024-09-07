@@ -4,6 +4,9 @@ import random
 import numpy as np
 import torch 
 import tensorflow
+from sklearn.linear_model import LinearRegression
+import requests
+import os
 
 def flipside_api_results(query, api_key):
   
@@ -110,3 +113,50 @@ def calculate_cagr(history):
     cagr = (final_value / initial_value) ** (1 / number_of_years) - 1
     cagr_percentage = cagr * 100
     return cagr
+
+def calculate_beta(data, columnx, columny):
+    X = data[f'{columnx}'].pct_change().dropna().values.reshape(-1, 1)  
+    Y = data[f'{columny}'].pct_change().dropna().values
+  
+    # Check if X and Y are not empty
+    if X.shape[0] == 0 or Y.shape[0] == 0:
+        print("Input arrays X and Y must have at least one sample each.")
+        return 0
+
+    # Fit the linear regression model
+    model = LinearRegression()
+    model.fit(X, Y)
+
+    # Output the beta
+    beta = model.coef_[0]
+    return beta
+
+def fetch_and_process_tbill_data(api_url, api_key, data_key, date_column, value_column, date_format='datetime'):
+    api_url_with_key = f"{api_url}&api_key={api_key}"
+
+    response = requests.get(api_url_with_key)
+    if response.status_code == 200:
+        data = response.json()
+        df = pd.DataFrame(data[data_key])
+        
+        if date_format == 'datetime':
+            df[date_column] = pd.to_datetime(df[date_column])
+        
+        df.set_index(date_column, inplace=True)
+        df[value_column] = df[value_column].astype(float)
+        return df
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of failure
+    
+def set_global_seed(env, seed=20):
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
+    env.seed(seed)
+    env.action_space.seed(seed)
+    

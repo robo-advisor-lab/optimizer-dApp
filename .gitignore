@@ -24,3 +24,10 @@ dist
 
 # vercel
 .vercel/*
+
+# IDE
+.vscode
+.idea
+
+# cli
+dist

@@ -14,6 +14,26 @@ order by
 
 """
 
+def live_prices(today):
+    beginning = today 
+    print('beginning', beginning)
+    prices_query = f"""
+    select
+      hour,
+      symbol,
+      price
+    from
+      ethereum.price.ez_prices_hourly
+    where
+      symbol in('WBTC', 'WETH')
+    and hour >= date('{beginning}')
+    order by
+      hour desc
+    """
+    return prices_query
+
+
+
 volume = """
 
 select
