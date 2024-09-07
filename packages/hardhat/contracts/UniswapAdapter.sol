@@ -17,7 +17,7 @@ contract UniswapAdapter is Ownable {
 
     event Swapped(address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
 
-    constructor(ISwapRouter _swapRouter) {
+    constructor(ISwapRouter _swapRouter) Ownable(msg.sender) {
         swapRouter = _swapRouter;
     }
 

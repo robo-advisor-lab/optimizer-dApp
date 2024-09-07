@@ -4,14 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-//import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./UniswapAdapter.sol";
 import "./ChainlinkPriceOracle.sol";
 import "./MLPredictionOracle.sol";
 
 contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
-    using SafeMath for uint256;
-
     struct Asset {
         address tokenAddress;
         uint256 weight; // in basis points (e.g., 5000 = 50%)
@@ -20,6 +17,7 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
 
     uint256 public constant BASIS_POINTS = 10000;
     uint256 public constant REBALANCE_INTERVAL = 1 hours;
+    uint256 public constant PREDICTION_VALIDITY_PERIOD = 1 days;
 
     address public manager;
     uint256 public nav;
@@ -39,7 +37,7 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
         address _uniswapAdapter,
         address _priceOracle,
         address _mlPredictionOracle
-    ) ERC20(_name, _symbol) {
+    ) ERC20(_name, _symbol) Ownable(msg.sender) {
         manager = _manager;
         lastRebalance = block.timestamp;
         uniswapAdapter = UniswapAdapter(_uniswapAdapter);
@@ -52,8 +50,6 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
         _;
     }
 
-    // ... [Otras funciones como antes]
-
     function rebalance() external onlyManagerOrOwner {
         require(block.timestamp >= lastRebalance + REBALANCE_INTERVAL, "Rebalance interval not met");
 
@@ -65,16 +61,16 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
         for (uint i = 0; i < assets.length; i++) {
             Asset storage asset = assets[i];
             uint256 predictedWeight = mlPredictionOracle.getPrediction(asset.tokenAddress);
-            uint256 targetValue = totalValue.mul(predictedWeight).div(BASIS_POINTS);
+            uint256 targetValue = (totalValue * predictedWeight) / BASIS_POINTS;
             uint256 currentValue = getCurrentValue(asset.tokenAddress, asset.balance);
             
             if (currentValue > targetValue) {
                 // Sell excess
-                uint256 excessAmount = currentValue.sub(targetValue);
+                uint256 excessAmount = currentValue - targetValue;
                 swapAsset(asset.tokenAddress, address(assets[0].tokenAddress), excessAmount);
             } else if (currentValue < targetValue) {
                 // Buy more
-                uint256 deficitAmount = targetValue.sub(currentValue);
+                uint256 deficitAmount = targetValue - currentValue;
                 swapAsset(address(assets[0].tokenAddress), asset.tokenAddress, deficitAmount);
             }
 
@@ -93,9 +89,9 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
         // Update balances
         for (uint i = 0; i < assets.length; i++) {
             if (assets[i].tokenAddress == tokenIn) {
-                assets[i].balance = assets[i].balance.sub(amount);
+                assets[i].balance -= amount;
             } else if (assets[i].tokenAddress == tokenOut) {
-                assets[i].balance = assets[i].balance.add(amountOut);
+                assets[i].balance += amountOut;
             }
         }
 
@@ -105,14 +101,14 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
     function getTotalValue() public view returns (uint256) {
         uint256 total = 0;
         for (uint i = 0; i < assets.length; i++) {
-            total = total.add(getCurrentValue(assets[i].tokenAddress, assets[i].balance));
+            total += getCurrentValue(assets[i].tokenAddress, assets[i].balance);
         }
         return total;
     }
 
     function getCurrentValue(address token, uint256 balance) public view returns (uint256) {
         uint256 priceInUSD = priceOracle.getLatestPriceInUSD(token);
-        return balance.mul(priceInUSD).div(1e18); // Assuming balance is in token's smallest unit
+        return (balance * priceInUSD) / 1e18; // Assuming balance is in token's smallest unit
     }
 
     function updateAssetBalance(address tokenAddress, uint256 newBalance) external onlyManagerOrOwner {

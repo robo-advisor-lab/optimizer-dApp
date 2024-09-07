@@ -18,8 +18,8 @@ contract MLPredictionOracle is AccessControl, Pausable {
     event PredictionUpdated(uint256 timestamp);
 
     constructor() {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(UPDATER_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(UPDATER_ROLE, msg.sender);
     }
 
     function updatePrediction(address[] memory assets, uint256[] memory weights) external onlyRole(UPDATER_ROLE) whenNotPaused {

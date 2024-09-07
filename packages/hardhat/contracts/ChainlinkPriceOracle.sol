@@ -9,7 +9,7 @@ contract ChainlinkPriceOracle is Ownable {
 
     event PriceFeedUpdated(address indexed token, address indexed priceFeed);
 
-    constructor() {}
+    constructor() Ownable(msg.sender){}
 
     function updatePriceFeed(address token, address priceFeed) external onlyOwner {
         priceFeedsMapping[token] = priceFeed;
