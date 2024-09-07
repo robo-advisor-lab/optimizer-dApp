@@ -1,0 +1,9 @@
+{
+  "installCommand": "yarn install",
+  "crons": [
+    {
+      "path": "/api/cron",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
