@@ -34,9 +34,9 @@ export default function Home() {
             <h1>Summary</h1>
             <div className="grid grid-cols-2 ">
               <div
-                className="radial-progress bg-cyan-500"
-                style={{ "--value": "70", "--size": "12rem", "--thickness": "2px" }}
+                className="radial-progress bg-cyan-500 text-primary-content border-4 border-cyan-500 w-48 h-48"
                 role="progressbar"
+                data-value="70"
               >
                 70%
               </div>
