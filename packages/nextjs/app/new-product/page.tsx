@@ -1,7 +1,50 @@
-import React from "react";
-import Image from "next/image";
+"use client";
 
-const page = () => {
+import React from "react";
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+
+const Page = () => {
+  const [durationForm, setDurationForm] = useState("");
+  const [frequenceForm, setFrequenceForm] = useState("");
+  const [numAdress, setNumAdres] = useState(1);
+  const elements = [];
+
+  const handleClickAdressInputPlus = () => {
+    setNumAdres(numAdress + 1);
+  };
+  const handleClickAdressInputLesss = () => {
+    if (numAdress > 1) setNumAdres(numAdress - 1);
+  };
+
+  const handleChangeDuration = (event: SelectChangeEvent) => {
+    setDurationForm(event.target.value as string);
+  };
+
+  const handleChangeFrequence = (event: SelectChangeEvent) => {
+    setFrequenceForm(event.target.value as string);
+  };
+
+  for (let index = 0; index < numAdress; index++) {
+    elements.push(
+      <Box component="form" sx={{ "& > :not(style)": { m: 1, width: "25ch" } }} noValidate autoComplete="off">
+        <TextField
+          id="outlined-basic"
+          label={"Cripto Address " + (index + 1)}
+          variant="outlined"
+          name={"adress" + index}
+        />
+      </Box>,
+    );
+  }
   return (
     <div>
       <div className="container mx-auto px-4 py-16">
@@ -17,19 +60,65 @@ const page = () => {
             </button>
           </div>
           <div className="md:w-1/2">
-            <div className="card bg-base-100 w-96 shadow-xl">
-              <figure>
-                <Image src="/bt-1.jpeg" alt="Investment Product" width={384} height={256} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">Purpose a new product</h2>
-                <p>For traditional and institutional investors</p>
-                <div className="card-actions justify-end">
-                  <a href="/">
-                    <button className="btn btn-primary">Buy Now</button>
-                  </a>
+            <div className="bg-blue-100 px-6 py-4 mt-3 rounded-lg">
+              <h1>DAO Governance</h1>
+              <p>¿Cón que cripto prefeires trabajar?</p>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
+              </FormGroup>
+              <div className="flex gap-3">
+                <p>Dirección Cripto</p>
+                <div
+                  className="bg-blue-300 text-blue-800 px-3 rounded-full flex items-center justify-center cursor-pointer select-none"
+                  onClick={handleClickAdressInputPlus}
+                >
+                  +
+                </div>
+                <div
+                  className="bg-red-300 text-red-800 px-3 rounded-full flex items-center justify-center cursor-pointer select-none"
+                  onClick={handleClickAdressInputLesss}
+                >
+                  -
                 </div>
               </div>
+              <div>{elements}</div>
+              <p>Duración</p>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Duracion</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={durationForm}
+                    label="Duracion"
+                    onChange={handleChangeDuration}
+                  >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <p>Frecuencia</p>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Frecuencia</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={frequenceForm}
+                    label="Frecuencia"
+                    onChange={handleChangeFrequence}
+                  >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </div>
           </div>
         </div>
@@ -41,4 +130,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

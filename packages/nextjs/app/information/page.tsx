@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-const page = () => {
+const Page = () => {
   return (
     <div>
       <div className="hero bg-base-200 ">
@@ -46,10 +46,12 @@ const page = () => {
             <Image src="/rwa-1.jpeg" alt="Shoes" width={500} height={300} />
           </figure>
           <div className="card-body">
-            <h2 className="card-title">RWA ETF on-chain!</h2>
+            <h2 className="card-title">Purpose a new product</h2>
             <p>Experience the Power of RWA on-chain</p>
             <div className="card-actions justify-end">
-              <button className="btn btn-primary">Buy Now</button>
+              <a href="/new-product">
+                <button className="btn btn-primary">Buy Now</button>
+              </a>
             </div>
           </div>
         </div>
@@ -58,4 +60,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

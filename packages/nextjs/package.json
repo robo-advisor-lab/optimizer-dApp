@@ -16,7 +16,13 @@
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@heroicons/react": "~2.0.11",
+    "@mui/icons-material": "^6.0.2",
+    "@mui/material": "^6.0.2",
+    "@mui/styled-engine-sc": "^6.0.2",
+    "@mui/x-charts": "^7.16.0",
     "@rainbow-me/rainbowkit": "2.1.2",
     "@tanstack/react-query": "~5.28.6",
     "@uniswap/sdk-core": "~4.0.1",
@@ -32,6 +38,7 @@
     "react-copy-to-clipboard": "~5.1.0",
     "react-dom": "~18.2.0",
     "react-hot-toast": "~2.4.0",
+    "styled-components": "^6.1.13",
     "use-debounce": "~8.0.4",
     "usehooks-ts": "2.13.0",
     "viem": "2.17.4",

@@ -1,5 +1,11 @@
+"use client";
+
 // pages/index.js
 import Head from "next/head";
+import Stack from "@mui/material/Stack";
+import { Gauge } from "@mui/x-charts/Gauge";
+import { LineChart } from "@mui/x-charts/LineChart";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function Home() {
   return (
@@ -29,22 +35,32 @@ export default function Home() {
           {/* Primera fila */}
           <div className="bg-gray-800 rounded-lg shadow p-4 col-span-3">
             <h1 className="font-bold text-ellipsis">Historical returns</h1>
+            <LineChart
+              xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+              series={[
+                {
+                  data: [2, 5.5, 2, 8.5, 1.5, 5],
+                },
+              ]}
+              width={500}
+              height={300}
+            />
           </div>
           <div className="bg-gray-800 rounded-lg shadow p-4  ">
             <h1>Summary</h1>
-            <div className="grid grid-cols-2 ">
-              <div
-                className="radial-progress bg-cyan-500 text-primary-content border-4 border-cyan-500 w-48 h-48"
-                role="progressbar"
-                data-value="70"
-              >
-                70%
-              </div>
-              <div className="p-20">
-                <p>BTC</p>
-                <p>ETH</p>
-              </div>
-            </div>
+            <PieChart
+              series={[
+                {
+                  data: [
+                    { id: 0, value: 10, label: "series A" },
+                    { id: 1, value: 15, label: "series B" },
+                    { id: 2, value: 20, label: "series C" },
+                  ],
+                },
+              ]}
+              width={400}
+              height={200}
+            />
           </div>
 
           {/* Segunda fila */}
@@ -83,13 +99,23 @@ export default function Home() {
           </div>
 
           <div className="bg-gray-800 rounded-lg shadow p-4">
-            <div className="indicator">
-              <span className="indicator-item badge badge-secondary"></span>
-              <div className="bg-base-300 grid h-32 w-32 place-items-center">content</div>
-            </div>
+            <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
+              <Gauge width={100} height={100} value={60} />
+              <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
+            </Stack>
           </div>
           <div className="bg-gray-800 rounded-lg shadow p-4 col-span-2 ">
-            <progress className="progress w-56 bg-cyan-500 top-24" value={0} max="100"></progress>
+            <ul className="menu bg-base-200 rounded-box w-56">
+              <li>
+                <a>Item 1</a>
+              </li>
+              <li>
+                <a>Item 2</a>
+              </li>
+              <li>
+                <a>Item 3</a>
+              </li>
+            </ul>
           </div>
         </div>
       </main>

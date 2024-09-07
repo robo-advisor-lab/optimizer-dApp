@@ -34,3 +34,6 @@ dist
 
 # secrets 
 *.env
+
+# DS Store
+.DS_Store
