@@ -1,6 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET() {
   console.log("hello world");
-  res.status(200).json({ message: "Hello World" });
+  return Response.json({ message: "Hello World" });
+}
+
+export async function POST() {
+  console.log("hello world");
+  return Response.json({ message: "Hello World" });
 }

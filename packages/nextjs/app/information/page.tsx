@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const page = () => {
   return (
@@ -27,7 +28,7 @@ const page = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
         <div className="card bg-base-100 w-96 shadow-xl">
           <figure>
-            <img src="/pc-1.jpeg" alt="Shoes" />
+            <Image src="/pc-1.jpeg" alt="Shoes" width={500} height={300} />
           </figure>
           <div className="card-body">
             <h2 className="card-title">BTC/ETH</h2>
@@ -42,7 +43,7 @@ const page = () => {
 
         <div className="card bg-base-100 w-96 shadow-xl">
           <figure>
-            <img src="/rwa-1.jpeg" alt="Shoes" />
+            <Image src="/rwa-1.jpeg" alt="Shoes" width={500} height={300} />
           </figure>
           <div className="card-body">
             <h2 className="card-title">RWA ETF on-chain!</h2>
