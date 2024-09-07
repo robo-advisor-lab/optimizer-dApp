@@ -1,80 +1,263 @@
-# 🏗 Scaffold-ETH 2
+```tla
+---- MODULE EnhancedFundOperations ----
+EXTENDS Integers, Sequences, FiniteSets, Reals
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+CONSTANTS
+    Investors,
+    Assets,
+    MaxTokens,
+    MaxDuration,
+    MaxRebalancingFrequency,
+    MinVotingPeriod,
+    MaxVotingPeriod,
+    QuorumThreshold,
+    ApprovalThreshold
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+VARIABLES
+    fundManager,
+    governance,
+    treasury,
+    mlOracle,
+    uniswap,
+    chainlink,
+    vehicleFactory,
+    investmentVehicles,
+    disperseApp
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+vars == << fundManager, governance, treasury, mlOracle, uniswap, chainlink, vehicleFactory, investmentVehicles, disperseApp >>
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+\* Tipos de datos
+VehicleParams == [
+    duration: 1..MaxDuration,
+    rebalancingFrequency: 1..MaxRebalancingFrequency,
+    numTokens: 1..MaxTokens,
+    tokenAddresses: SUBSET Assets
+]
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+ProposalStatus == {"Active", "Passed", "Rejected", "Executed"}
 
-## Requirements
+Proposal == [
+    id: Nat,
+    description: STRING,
+    startTime: Nat,
+    endTime: Nat,
+    status: ProposalStatus,
+    votes: [Investors -> {"For", "Against", "Abstain"}]
+]
 
-Before you begin, you need to install the following tools:
+\* Funciones auxiliares
+CalculateNewWeights(prediction, currentAssets) ==
+    LET totalValue == SUM({prediction[a] * currentAssets[a] : a \in Assets})
+    IN [a \in Assets |-> (prediction[a] * currentAssets[a]) / totalValue]
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+CalculateNAV(assets, tokenAddresses) ==
+    SUM({chainlink.prices[a] * assets[a] : a \in tokenAddresses})
 
-## Quickstart
+CalculateVotingPower(investor) ==
+    LET totalTokens == SUM({v.tokenHolders[investor] : v \in investmentVehicles})
+    IN totalTokens / SUM({v.totalSupply : v \in investmentVehicles})
 
-To get started with Scaffold-ETH 2, follow the steps below:
+\* Acciones
 
-1. Install dependencies if it was skipped in CLI:
+InitializeFund ==
+    /\ fundManager' = [
+        nav: 0,
+        totalSupply: 0,
+        managementFee: 0.02,  \* 2% annual management fee
+        performanceFee: 0.20  \* 20% performance fee
+       ]
+    /\ governance' = [
+        proposals: {},
+        votingPower: [i \in Investors |-> 0],
+        nextProposalId: 1
+       ]
+    /\ treasury' = [
+        assets: [a \in Assets |-> 0]
+       ]
+    /\ mlOracle' = [
+        latestPrediction: [a \in Assets |-> 1]
+       ]
+    /\ uniswap' = [
+        liquidity: [a \in Assets |-> 0],
+        fees: 0.003
+       ]
+    /\ chainlink' = [
+        prices: [a \in Assets |-> 1]
+       ]
+    /\ vehicleFactory' = [
+        vehicleCount: 0
+       ]
+    /\ investmentVehicles' = {}
+    /\ disperseApp' = [
+        pendingDistributions: {}
+       ]
 
+CreateNewVehicle(params) ==
+    /\ params \in VehicleParams
+    /\ LET newVehicle == [
+           id: vehicleFactory.vehicleCount + 1,
+           params: params,
+           nav: 0,
+           totalSupply: 0,
+           tokenHolders: [i \in Investors |-> 0],
+           lastRebalance: 0
+       ]
+       IN
+       /\ investmentVehicles' = investmentVehicles \union {newVehicle}
+       /\ vehicleFactory' = [vehicleFactory EXCEPT !.vehicleCount = @ + 1]
+
+DepositAssets(investor, vehicle, assetAmounts) ==
+    /\ vehicle \in investmentVehicles
+    /\ \A a \in DOMAIN assetAmounts : assetAmounts[a] >= 0
+    /\ LET totalDeposit == SUM({chainlink.prices[a] * assetAmounts[a] : a \in DOMAIN assetAmounts})
+           newTokens == IF vehicle.totalSupply = 0 THEN totalDeposit
+                        ELSE totalDeposit * vehicle.totalSupply / vehicle.nav
+       IN
+       /\ treasury' = [treasury EXCEPT !.assets = [a \in Assets |-> 
+                       treasury.assets[a] + IF a \in DOMAIN assetAmounts THEN assetAmounts[a] ELSE 0]]
+       /\ investmentVehicles' = (investmentVehicles \ {vehicle}) \union 
+                                {[vehicle EXCEPT 
+                                    !.nav = @ + totalDeposit,
+                                    !.totalSupply = @ + newTokens,
+                                    !.tokenHolders = [i \in Investors |-> 
+                                        IF i = investor THEN @[i] + newTokens ELSE @[i]]
+                                ]}
+       /\ fundManager' = [fundManager EXCEPT !.nav = @ + totalDeposit]
+
+WithdrawAssets(investor, vehicle, tokenAmount) ==
+    /\ vehicle \in investmentVehicles
+    /\ tokenAmount <= vehicle.tokenHolders[investor]
+    /\ LET withdrawalShare == tokenAmount / vehicle.totalSupply
+           withdrawalAmount == [a \in Assets |-> withdrawalShare * treasury.assets[a]]
+           totalWithdrawal == SUM({chainlink.prices[a] * withdrawalAmount[a] : a \in Assets})
+       IN
+       /\ treasury' = [treasury EXCEPT !.assets = [a \in Assets |-> @[a] - withdrawalAmount[a]]]
+       /\ investmentVehicles' = (investmentVehicles \ {vehicle}) \union 
+                                {[vehicle EXCEPT 
+                                    !.nav = @ - totalWithdrawal,
+                                    !.totalSupply = @ - tokenAmount,
+                                    !.tokenHolders = [i \in Investors |-> 
+                                        IF i = investor THEN @[i] - tokenAmount ELSE @[i]]
+                                ]}
+       /\ fundManager' = [fundManager EXCEPT !.nav = @ - totalWithdrawal]
+
+UpdateChainlinkPrices ==
+    \E newPrices \in [Assets -> Real] :
+        chainlink' = [chainlink EXCEPT !.prices = newPrices]
+
+GetMLPrediction ==
+    \E prediction \in [Assets -> Real] :
+        mlOracle' = [mlOracle EXCEPT !.latestPrediction = prediction]
+
+Rebalance(vehicle) ==
+    /\ vehicle \in investmentVehicles
+    /\ vehicle.lastRebalance + vehicle.params.rebalancingFrequency <= Now
+    /\ LET prediction == mlOracle.latestPrediction
+           currentAssets == [a \in Assets |-> treasury.assets[a] * (vehicle.nav / fundManager.nav)]
+           newWeights == CalculateNewWeights(prediction, currentAssets)
+           tradesToExecute == [a \in Assets |-> newWeights[a] - currentAssets[a]]
+           tradingFees == SUM({ABS(tradesToExecute[a]) * uniswap.fees : a \in Assets})
+       IN
+       /\ treasury' = [treasury EXCEPT !.assets = [a \in Assets |-> @[a] + tradesToExecute[a]]]
+       /\ uniswap' = [uniswap EXCEPT !.liquidity = [a \in Assets |-> @[a] - tradesToExecute[a]]]
+       /\ investmentVehicles' = (investmentVehicles \ {vehicle}) \union 
+                                {[vehicle EXCEPT 
+                                    !.nav = @ - tradingFees,
+                                    !.lastRebalance = Now
+                                ]}
+       /\ fundManager' = [fundManager EXCEPT !.nav = @ - tradingFees]
+
+UpdateNAV(vehicle) ==
+    /\ vehicle \in investmentVehicles
+    /\ LET newNAV == CalculateNAV(treasury.assets, vehicle.params.tokenAddresses)
+           managementFee == (newNAV - vehicle.nav) * fundManager.managementFee * (Now - vehicle.lastRebalance) / 365
+           performanceFee == MAX(0, (newNAV - vehicle.nav - managementFee) * fundManager.performanceFee)
+           totalFees == managementFee + performanceFee
+       IN
+       /\ investmentVehicles' = (investmentVehicles \ {vehicle}) \union 
+                                {[vehicle EXCEPT 
+                                    !.nav = newNAV - totalFees,
+                                    !.lastRebalance = Now
+                                ]}
+       /\ fundManager' = [fundManager EXCEPT !.nav = @ - totalFees]
+
+CreateGovernanceProposal(description, votingPeriod) ==
+    /\ votingPeriod \in MinVotingPeriod..MaxVotingPeriod
+    /\ LET newProposal == [
+           id: governance.nextProposalId,
+           description: description,
+           startTime: Now,
+           endTime: Now + votingPeriod,
+           status: "Active",
+           votes: [i \in Investors |-> "Abstain"]
+       ]
+       IN
+       /\ governance' = [governance EXCEPT 
+           !.proposals = @ \union {newProposal},
+           !.nextProposalId = @ + 1
+       ]
+
+Vote(investor, proposalId, voteChoice) ==
+    /\ \E proposal \in governance.proposals : 
+        /\ proposal.id = proposalId
+        /\ proposal.status = "Active"
+        /\ Now <= proposal.endTime
+        /\ LET updatedProposal == [proposal EXCEPT !.votes = [@ EXCEPT ![investor] = voteChoice]]
+           IN
+           governance' = [governance EXCEPT !.proposals = (@ \ {proposal}) \union {updatedProposal}]
+
+ExecuteProposal(proposalId) ==
+    /\ \E proposal \in governance.proposals :
+        /\ proposal.id = proposalId
+        /\ proposal.status = "Active"
+        /\ Now > proposal.endTime
+        /\ LET totalVotes == SUM({CalculateVotingPower(i) : i \in Investors})
+               forVotes == SUM({CalculateVotingPower(i) : i \in Investors WHERE proposal.votes[i] = "For"})
+               againstVotes == SUM({CalculateVotingPower(i) : i \in Investors WHERE proposal.votes[i] = "Against"})
+           IN
+           /\ totalVotes >= QuorumThreshold
+           /\ forVotes / (forVotes + againstVotes) >= ApprovalThreshold
+        /\ LET updatedProposal == [proposal EXCEPT !.status = "Passed"]
+           IN
+           /\ governance' = [governance EXCEPT !.proposals = (@ \ {proposal}) \union {updatedProposal}]
+           \* Here you would implement the actual execution of the proposal
+           /\ UNCHANGED << fundManager, treasury, mlOracle, uniswap, chainlink, vehicleFactory, investmentVehicles, disperseApp >>
+
+LiquidateVehicle(vehicle) ==
+    /\ vehicle \in investmentVehicles
+    /\ vehicle.params.duration <= Now
+    /\ LET liquidationAmount == [a \in Assets |-> treasury.assets[a] * (vehicle.nav / fundManager.nav)]
+           distribution == [i \in Investors |-> 
+               [a \in Assets |-> liquidationAmount[a] * (vehicle.tokenHolders[i] / vehicle.totalSupply)]]
+       IN
+       /\ treasury' = [treasury EXCEPT !.assets = [a \in Assets |-> @[a] - liquidationAmount[a]]]
+       /\ investmentVehicles' = investmentVehicles \ {vehicle}
+       /\ disperseApp' = [disperseApp EXCEPT !.pendingDistributions = @ \union {distribution}]
+       /\ fundManager' = [fundManager EXCEPT !.nav = @ - vehicle.nav]
+
+DistributeAssets ==
+    /\ disperseApp.pendingDistributions /= {}
+    /\ LET distribution == CHOOSE d \in disperseApp.pendingDistributions : TRUE
+       IN
+       /\ disperseApp' = [disperseApp EXCEPT !.pendingDistributions = @ \ {distribution}]
+       \* Here, you would implement the actual distribution of assets to investors
+       /\ UNCHANGED << fundManager, governance, treasury, mlOracle, uniswap, chainlink, vehicleFactory, investmentVehicles >>
+
+Next ==
+    \/ (\E params \in VehicleParams : CreateNewVehicle(params))
+    \/ (\E i \in Investors, v \in investmentVehicles, amounts \in [Assets -> Nat] : DepositAssets(i, v, amounts))
+    \/ (\E i \in Investors, v \in investmentVehicles, amount \in Nat : WithdrawAssets(i, v, amount))
+    \/ UpdateChainlinkPrices
+    \/ GetMLPrediction
+    \/ (\E v \in investmentVehicles : Rebalance(v))
+    \/ (\E v \in investmentVehicles : UpdateNAV(v))
+    \/ (\E desc \in STRING, period \in MinVotingPeriod..MaxVotingPeriod : CreateGovernanceProposal(desc, period))
+    \/ (\E i \in Investors, pid \in Nat, choice \in {"For", "Against", "Abstain"} : Vote(i, pid, choice))
+    \/ (\E pid \in Nat : ExecuteProposal(pid))
+    \/ (\E v \in investmentVehicles : LiquidateVehicle(v))
+    \/ DistributeAssets
+
+Spec == Init /\ [][Next]_vars
+
+====
 ```
-cd my-dapp-example
-yarn install
-```
-
-2. Run a local network in the first terminal:
-
-```
-yarn chain
-```
-
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/hardhat/hardhat.config.ts`.
-
-3. On a second terminal, deploy the test contract:
-
-```
-yarn deploy
-```
-
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
-```
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-Run smart contract test with `yarn hardhat:test`
-
-- Edit your smart contract `YourContract.sol` in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
-
-
-## Documentation
-
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
-
-To know more about its features, check out our [website](https://scaffoldeth.io).
-
-## Contributing to Scaffold-ETH 2
-
-We welcome contributions to Scaffold-ETH 2!
-
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
