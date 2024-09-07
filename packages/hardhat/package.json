@@ -17,8 +17,10 @@
     "verify": "hardhat etherscan-verify"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "~4.8.1",
+    "@chainlink/contracts": "^1.2.0",
+    "@openzeppelin/contracts": "^5.0.2",
     "@typechain/ethers-v6": "~0.5.1",
+    "@uniswap/v3-periphery": "^1.4.4",
     "dotenv": "~16.0.3",
     "envfile": "~6.18.0",
     "qrcode": "~1.5.1"
