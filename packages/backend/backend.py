@@ -347,6 +347,8 @@ def create_app():
 
         print(f'actions: {resp}')
 
+        print(f'historical port values variable: {historical_port_values}')
+
         cache.set('historical_port_values', historical_port_values)
         print(f"cache:{cache.get('historical_port_values')}")
 

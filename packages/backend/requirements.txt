@@ -38,10 +38,13 @@ dash
 dash-core-components
 dash-html-components
 dash-table
+dataclasses-json
 debugpy
 decorator
 defusedxml
+Deprecated
 diskcache
+dune_client
 ecdsa
 ecos
 ephem
@@ -128,6 +131,7 @@ namex
 nbclient
 nbconvert
 nbformat
+ndjson
 nest-asyncio
 networkx
 nose
@@ -214,7 +218,12 @@ torch
 tornado
 tqdm
 traitlets
+types-Deprecated
 types-python-dateutil
+types-PyYAML
+types-requests
+types-setuptools
+types-urllib3
 typing-inspect
 typing_extensions
 tzdata
@@ -230,6 +239,7 @@ Werkzeug
 widgetsnbextension
 wrapt
 xgboost
+xlrd
 yarl
 yfinance
 zipp
