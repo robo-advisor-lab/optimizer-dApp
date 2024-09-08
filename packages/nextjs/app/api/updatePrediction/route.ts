@@ -23,6 +23,30 @@ const SPM_CONTRACT_ADDRESS = deployedContracts[11155111].SmartPortfolioManager.a
 const MLPO_CONTRACT_ADDRESS = deployedContracts[11155111].MLPredictionOracle.address;
 const mlPredictionOracleABI = deployedContracts[11155111].MLPredictionOracle.abi;
 
+async function writeToTableland(prediction: any, timestamp: number) {
+  const db = new Database();
+  const tableName = "predictions_11155111_11155111_1809"; // Tu tabla de Tableland
+
+  try {
+    const { meta: insert } = await db
+      .prepare(`INSERT INTO ${tableName} (timestamp, assets, weights, additional_data) VALUES (?, ?, ?, ?);`)
+      .bind(
+        timestamp,
+        JSON.stringify(prediction.assets),
+        JSON.stringify(prediction.weights),
+        JSON.stringify(prediction.additionalData || {}),
+      )
+      .run();
+
+    await insert.txn?.wait();
+    console.log("Data written to Tableland successfully");
+    return true;
+  } catch (error) {
+    console.error("Error writing to Tableland:", error);
+    return false;
+  }
+}
+
 export async function POST() {
   try {
     // 1. Leer balances del Smart Portfolio Manager
@@ -45,38 +69,25 @@ export async function POST() {
 
     const prediction = await predictionResponse.json();
 
-    // 2. Almacenar en Tableland
-    const targetNetwork = sepolia;
-    const db = new Database();
-    // Nota: Asegúrate de manejar la autenticación adecuadamente
-
-    const tableName = `predictions_${targetNetwork.id}_1`; // Ajusta según tu tabla en Tableland
-
+    // 3. Escribir en Tableland
     const timestamp = Math.floor(Date.now() / 1000);
-    const { meta: insert } = await db
-      .prepare(`INSERT INTO ${tableName} (timestamp, assets, weights, additional_data) VALUES (?, ?, ?, ?);`)
-      .bind(
-        timestamp,
-        JSON.stringify(prediction.assets),
-        JSON.stringify(prediction.weights),
-        JSON.stringify(prediction.additionalData),
-      )
-      .run();
+    const tablelandWriteSuccess = await writeToTableland(prediction, timestamp);
 
-    // Esperar a que la inserción se complete
-    await insert.txn?.wait();
+    if (!tablelandWriteSuccess) {
+      throw new Error("Failed to write to Tableland");
+    }
 
-    // 3. Generar el hash de la fila insertada
+    // 4. Generar el hash de la fila insertada
     const tablelandHash = keccak256(
       encodeAbiParameters(parseAbiParameters("uint256, string, string, string"), [
         BigInt(timestamp),
         JSON.stringify(prediction.assets),
         JSON.stringify(prediction.weights),
-        JSON.stringify(prediction.additionalData),
+        JSON.stringify(prediction.additionalData || {}),
       ]),
     );
 
-    // 4. Actualizar el contrato MLPredictionOracle usando wagmi
+    // 5. Actualizar el contrato MLPredictionOracle usando wagmi
     const result = await writeContract(config, {
       address: MLPO_CONTRACT_ADDRESS,
       abi: mlPredictionOracleABI,
