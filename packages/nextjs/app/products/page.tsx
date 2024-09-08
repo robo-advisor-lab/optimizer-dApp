@@ -1,15 +1,18 @@
 "use client";
 
-// pages/index.js
+import { useState } from "react";
 import Head from "next/head";
 import Stack from "@mui/material/Stack";
 import { Gauge } from "@mui/x-charts/Gauge";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { EtherInput } from "~~/components/scaffold-eth";
 
 export default function Home() {
+  const [ethAmount, setEthAmount] = useState("");
+
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className=" min-h-screen text-white">
       <div>
         <div className="presentacion">
           <div className="titulo p-10">
@@ -21,6 +24,8 @@ export default function Home() {
               Maximize your crypto returns with our innovative portfolio. We combine the top two cryptocurrencies with
               machine learning for optimal daily rebalancing.
             </p>
+            <div>Enter amount</div>
+            <EtherInput value={ethAmount} onChange={amount => setEthAmount(amount)} />
           </div>
         </div>
       </div>{" "}

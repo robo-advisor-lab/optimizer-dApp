@@ -50,18 +50,49 @@ const Page = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-8 md:mb-0">
-            <h2 className="text-4xl font-bold mb-4">Unlock Your Financial Potential</h2>
-            <p className="text-gray-700 leading-relaxed">
-              Our investment product is designed to help you achieve your financial goals. With a diversified portfolio
-              and expert management, we&apos;ll guide you towards long-term success.
-            </p>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-6">
-              Learn More
-            </button>
+            <h2 className="text-4xl font-bold mb-4">DAO Governance Parameters</h2>
+
+            <div className="dao-governance-section">
+              <p>The DAO can vote on the following parameters for each investment vehicle issuance:</p>
+
+              <ul className="parameter-list">
+                <li className="mb-4">
+                  <strong className="mb-4">Tduration:</strong> Duration of the vehicle (e.g., 6 months, 1 year, 10
+                  years)
+                </li>
+                <li className="mb-4">
+                  <strong>Trebalancing:</strong> Rebalancing frequency (e.g., hourly, daily, weekly, yearly)
+                </li>
+                <li className="mb-4">
+                  <strong>ntokens:</strong> Number of tokens to include in the vehicle (e.g., 2, 3, ...)
+                </li>
+                <li className="mb-4">
+                  <strong>Ai:</strong> Set of token addresses to include in the vehicle, where i ∈ 1, 2, ..., ntokens
+                </li>
+              </ul>
+
+              <p>
+                These parameters allow the DAO to adjust the characteristics of each investment vehicle to adapt to
+                different strategies and market conditions.
+              </p>
+
+              <h3 className="subsection-title">Additional Considerations</h3>
+
+              <ul className="considerations-list">
+                <li>
+                  <strong>Governance:</strong> The DAO can adjust the token creation/destruction criteria through
+                  voting.
+                </li>
+                <li>
+                  <strong>Fees:</strong> The SC may charge fees for fund management and rebalancing, which will be
+                  deducted from the NAV.
+                </li>
+              </ul>
+            </div>
           </div>
           <div className="md:w-1/2">
             <div className="bg-blue-100 px-6 py-4 mt-3 rounded-lg">
-              <h1>DAO Governance</h1>
+              <h2 className="text-4xl font-bold mb-4">DAO Governance Parameters</h2>
               <p>¿Cón que cripto prefeires trabajar?</p>
               <FormGroup>
                 <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
@@ -124,7 +155,6 @@ const Page = () => {
         </div>
 
         {/* Additional sections can be added here for features, benefits, testimonials, etc. */}
-        <div className="mt-16">{/* ... more content ... */}</div>
       </div>
     </div>
   );
