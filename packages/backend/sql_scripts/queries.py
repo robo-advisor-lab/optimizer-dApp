@@ -15,8 +15,11 @@ order by
 """
 
 def live_prices(today):
-    beginning = today 
+    # Format the date as a string and wrap in quotes for SQL
+    beginning = f"'{today}'"
     print('beginning', beginning)
+
+    # Use TO_TIMESTAMP to convert the string to a timestamp for DATE_TRUNC
     prices_query = f"""
     select
       hour,
@@ -25,8 +28,8 @@ def live_prices(today):
     from
       ethereum.price.ez_prices_hourly
     where
-      symbol in('WBTC', 'WETH')
-    and hour >= date('{beginning}')
+      symbol in ('WBTC', 'WETH')
+    and hour >= date_trunc('hour', to_timestamp({beginning}, 'YYYY-MM-DD HH24:MI:SS'))
     order by
       hour desc
     """

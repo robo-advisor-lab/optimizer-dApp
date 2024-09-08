@@ -1,0 +1,2 @@
+curl -X POST http://localhost:5000/run-model
+curl -X POST http://localhost:5000/clear-cache

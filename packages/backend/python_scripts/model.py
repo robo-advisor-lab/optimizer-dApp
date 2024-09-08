@@ -85,6 +85,10 @@ class Portfolio(gym.Env):
         return [seed]
 
     def _get_observation(self):
+        # Ensure current_step does not go out-of-bounds
+        if self.current_step >= len(self.df):
+            raise IndexError(f"Current step {self.current_step} is out of bounds for the dataframe.")
+        
         obs = self.df.iloc[self.current_step].values
         if np.isnan(obs).any():
             raise ValueError("Observation contains NaN values.")
@@ -192,26 +196,25 @@ class Portfolio(gym.Env):
         print(f"Reward: {reward}")
 
         # Move to the next step
-        self.current_step += 1
-        print(f"Moved to step {self.current_step}")
 
-        done = self.current_step >= len(self.df) - 1
-        print(f"Done: {done}")
-
+        # if done:
+        #     state = None  # Or you can return the last valid state
+        # else:
         state = self._get_observation()
         print(f"State: {state}")
+        self.states_log.append((state, self.df.index[self.current_step]))
+        print(f"State log updated")
 
+    # state = self._get_observation()
+    
         # Update logs
         self.prev_portfolio_value = portfolio_value_after
         print(f"Previous portfolio value updated: {self.prev_portfolio_value}")
 
-        self.states_log.append((state, self.df.index[self.current_step]))
-        print(f"State log updated")
-
         self.rewards_log.append((reward, self.df.index[self.current_step]))
         print(f"Rewards log updated")
 
-        self.actions_log.append((action, self.df.index[self.current_step]))
+        self.actions_log.append((action_percentages, self.df.index[self.current_step]))
         print(f"Actions log updated")
 
         self.portfolio_values_log.append((portfolio_value_after, self.df.index[self.current_step]))
@@ -220,7 +223,12 @@ class Portfolio(gym.Env):
         self.portfolio_composition_log.append((self.portfolio.copy(), self.cash, self.df.index[self.current_step]))
         print(f"Portfolio composition log updated")
 
-        return state.astype(np.float32), reward, done, False, {}
+        self.current_step += 1
+
+        done = self.current_step >= len(self.df) - 1
+        print(f"Done: {done}")
+
+        return (state.astype(np.float32), reward, done, False, {}) if state is not None else (None, reward, done, False, {})
 
 
 

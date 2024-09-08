@@ -70,6 +70,7 @@ def to_time(df):
     return df 
 
 def clean_prices(prices_df):
+    print('cleaning prices')
     prices_df_pivot = prices_df.pivot(
         index='hour',
         columns='symbol',
@@ -78,7 +79,7 @@ def clean_prices(prices_df):
     prices_df_pivot = prices_df_pivot.reset_index()
     prices_df_pivot.columns = [f'{col[0]}_{col[1]}' for col in prices_df_pivot.columns]
     prices_df_pivot.rename(columns={"h_o":"dt","W_B":"BTC Price","W_E":"ETH Price"}, inplace=True)
-
+    print(f'cleaned prices: {prices_df}')
     return prices_df_pivot
 
 def calculate_cumulative_return(portfolio_values_df, col):
@@ -97,6 +98,7 @@ def calculate_cumulative_return(portfolio_values_df, col):
     return cumulative_return
 
 def calculate_cagr(history):
+    print(f'cagr history: {history}')
     #print(f'cagr history {history}')
     initial_value = history.iloc[0]
     #print(f'cagr initial value {initial_value}')
@@ -159,4 +161,93 @@ def set_global_seed(env, seed=20):
     torch.backends.cudnn.benchmark = True
     env.seed(seed)
     env.action_space.seed(seed)
+
+def normalize_asset_returns(price_timeseries, start_date, end_date, normalize_value=1e4):
+   # Ensure that the price_timeseries index is timezone-naive
+    # price_timeseries.index = price_timeseries.index.tz_localize(None)
     
+    # Ensure that start_date and end_date are timezone-naive
+    start_date = pd.to_datetime(start_date).tz_localize(None)
+    end_date = pd.to_datetime(end_date).tz_localize(None)
+
+    # Adjust start_date to the latest available date in the price_timeseries
+
+    # print(f'Adjusted start date: {start_date}')
+    # print(f'End date: {end_date}')
+    
+    # Filter the data based on the adjusted start date and end date
+    filtered_data = price_timeseries[(price_timeseries.index >= start_date) & (price_timeseries.index <= end_date)].copy()
+    #print(f'Normalize function filtered data: {filtered_data}')
+    
+    if filtered_data.empty:
+        print("Filtered data is empty after applying start date.")
+        return pd.DataFrame()
+
+    # Converting data to float64 to ensure compatibility with numpy functions
+    prev_prices = filtered_data.iloc[0][['BTC Price', 'ETH Price']].astype(np.float64).values
+    #print(f"Initial previous prices: {prev_prices}")
+
+    normalized_values = {
+        'BTC Price': [normalize_value],
+        'ETH Price': [normalize_value],
+    }
+    dates = [start_date]  # Use the original start date for labeling
+    
+    for i in range(1, len(filtered_data)):
+        current_prices = filtered_data.iloc[i][['BTC Price', 'ETH Price']].astype(np.float64).values
+        #print(f"Iteration {i}, Current Prices: {current_prices}")
+
+        # Calculate log returns safely
+        price_ratio = current_prices / prev_prices
+        log_returns = np.log(price_ratio)
+        #print(f"Price ratio: {price_ratio}")
+        #print(f"Log returns: {log_returns}")
+
+        # Update the normalized values for each asset using the exponential of log returns
+        for idx, asset in enumerate(['BTC Price', 'ETH Price']):
+            normalized_values[asset].append(normalized_values[asset][-1] * np.exp(log_returns[idx]))
+            #print(f"Updated normalized value for {asset}: {normalized_values[asset][-1]}")
+
+        dates.append(filtered_data.index)
+        prev_prices = current_prices
+    
+    normalized_returns_df = pd.DataFrame({
+        'ds': filtered_data.index,
+        'normalized_ETH': normalized_values['ETH Price'],
+        'normalized_BTC': normalized_values['BTC Price'],
+    })
+    
+    return normalized_returns_df
+
+def prepare_data_for_simulation(price_timeseries, start_date, end_date):
+    """
+    Ensure price_timeseries has entries for start_date and end_date.
+    If not, fill in these dates using the last available data.
+    """
+    # Ensure 'ds' is in datetime format
+    # price_timeseries['hour'] = pd.to_datetime(price_timeseries['hour'])
+    
+    # Set the index to 'ds' for easier manipulation
+    # if price_timeseries.index.name != 'hour':
+    #     price_timeseries.set_index('hour', inplace=True)
+
+    print(f'price index: {price_timeseries.index}')
+
+    price_timeseries.index = price_timeseries.index.tz_localize(None)
+    
+    # Check if start_date and end_date exist in the data
+    required_dates = pd.date_range(start=start_date, end=end_date, freq='H')
+    all_dates = price_timeseries.index.union(required_dates)
+    
+    # Reindex the dataframe to ensure all dates from start to end are present
+    price_timeseries = price_timeseries.reindex(all_dates)
+    
+    # Forward fill to handle NaN values if any dates were missing
+    price_timeseries.fillna(method='ffill', inplace=True)
+
+    # Reset index if necessary or keep the datetime index based on further needs
+    price_timeseries.reset_index(inplace=True, drop=False)
+    price_timeseries.rename(columns={'index': 'hour'}, inplace=True)
+    
+    return price_timeseries
+
