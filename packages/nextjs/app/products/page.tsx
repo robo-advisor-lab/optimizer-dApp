@@ -55,19 +55,19 @@ export default function Home() {
                 <a>Market Risk Premium: 0.8796147246970394</a>
               </li>
               <li>
-                <a>Market Risk Premium: 0.8796147246970394</a>
+                <a>Index CAGR: 0.9301147246970394 </a>
+              </li>
+              <li>
+                <a>Portfolio CAGR: 0.9239362498359505 </a>
+              </li>
+              <li>
+                <a>Risk Free Rate: 0.050499999999999996</a>
               </li>
               <li>
                 <a>Market Risk Premium: 0.8796147246970394</a>
               </li>
               <li>
-                <a>Market Risk Premium: 0.8796147246970394</a>
-              </li>
-              <li>
-                <a>Market Risk Premium: 0.8796147246970394</a>
-              </li>
-              <li>
-                <a>Market Risk Premium: 0.8796147246970394</a>
+                <a>Portfolio Expected Return: 0.9240366405323955</a>
               </li>
               {/* ... other list items ... */}
             </ul>
@@ -82,6 +82,13 @@ export default function Home() {
                 <div className="stat-title">risk aversion</div>
                 <div className="stat-value text-primary"></div>
                 <div className="stat-desc">21% more than last month</div>
+                <div className="rating">
+                  <input type="radio" name="rating-4" className="mask mask-star-2 bg-slate-500" />
+                  <input type="radio" name="rating-4" className="mask mask-star-2  bg-slate-500" defaultChecked />
+                  <input type="radio" name="rating-4" className="mask mask-star-2 bg-slate-500" />
+                  <input type="radio" name="rating-4" className="mask mask-star-2 bg-slate-500" />
+                  <input type="radio" name="rating-4" className="mask mask-star-2 bg-slate-500" />
+                </div>
 
                 <div className="rating">{/* ... rating stars ... */}</div>
               </div>
