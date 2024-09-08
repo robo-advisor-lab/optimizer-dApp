@@ -103,7 +103,8 @@ def create_app():
     @app.route('/run-model', methods=['POST'])
     def run_model():
         seed=20
-        today_utc = dt.datetime.now(dt.timezone.utc) - timedelta(hours=2)
+        today_utc = dt.datetime.now(dt.timezone.utc) 
+        # today_utc = dt.datetime.now(dt.timezone.utc) - timedelta(hours=2)
 
     # Format the UTC time
         formatted_today_utc = today_utc.strftime('%Y-%m-%d %H:00:00') 

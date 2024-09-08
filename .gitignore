@@ -37,3 +37,6 @@ dist
 
 # DS Store
 .DS_Store
+
+# notebooks
+*.ipynb
