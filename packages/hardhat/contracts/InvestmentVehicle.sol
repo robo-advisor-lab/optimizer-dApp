@@ -53,14 +53,14 @@ contract InvestmentVehicle is ERC20, ReentrancyGuard, Ownable {
 function rebalance() external onlyManagerOrOwner {
     require(block.timestamp >= lastRebalance + REBALANCE_INTERVAL, "Rebalance interval not met");
 
-    (uint256 predictionTimestamp, /* bytes32 tablelandHash */) = mlPredictionOracle.getLatestPredictionData();
+    (uint256 predictionTimestamp, uint256 unusedWeight, bytes32 tablelandHash) = mlPredictionOracle.getLatestPrediction(address(0)); // Pasamos address(0) como un token dummy
     require(block.timestamp <= predictionTimestamp + PREDICTION_VALIDITY_PERIOD, "ML prediction is outdated");
     
     uint256 totalValue = getTotalValue();
 
     for (uint i = 0; i < assets.length; i++) {
         Asset storage asset = assets[i];
-        (uint256 predictedWeight, , ) = mlPredictionOracle.getPrediction(asset.tokenAddress);
+        (uint256 predictedWeight, , ) = mlPredictionOracle.getLatestPrediction(asset.tokenAddress);
         uint256 targetValue = (totalValue * predictedWeight) / BASIS_POINTS;
         uint256 currentValue = getCurrentValue(asset.tokenAddress, asset.balance);
         
