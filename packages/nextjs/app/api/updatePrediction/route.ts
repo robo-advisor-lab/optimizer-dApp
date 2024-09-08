@@ -1,28 +1,42 @@
 import { NextResponse } from "next/server";
 import { Database } from "@tableland/sdk";
-import { createConfig, http, writeContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
+import { createPublicClient, http, parseAbiItem } from "viem";
 import { encodeAbiParameters, keccak256, parseAbiParameters } from "viem";
 import { sepolia } from "viem/chains";
+import { createConfig } from "wagmi";
 import deployedContracts from "~~/contracts/deployedContracts";
 
-export const config = createConfig({
+const publicClient = createPublicClient({
+  chain: sepolia,
+  transport: http(),
+});
+
+const config = createConfig({
   chains: [sepolia],
   transports: {
     [sepolia.id]: http(),
   },
 });
 
-const mlPredictionOracleABI = deployedContracts[11155111].MLPredictionOracle.abi;
+const SPM_CONTRACT_ADDRESS = deployedContracts[11155111].SmartPortfolioManager.address;
 const MLPO_CONTRACT_ADDRESS = deployedContracts[11155111].MLPredictionOracle.address;
+const mlPredictionOracleABI = deployedContracts[11155111].MLPredictionOracle.abi;
 
 export async function POST() {
   try {
-    // 1. Obtener predicción de la API Flask
+    // 1. Leer balances del Smart Portfolio Manager
+    const balances = await publicClient.readContract({
+      address: SPM_CONTRACT_ADDRESS,
+      abi: [parseAbiItem("function getAssetBalances() view returns (address[], uint256[])")],
+      functionName: "getAssetBalances",
+    });
+
+    // 2. Obtener predicción de la API Flask
     const predictionResponse = await fetch("/api/python/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ balances }),
     });
 
     if (!predictionResponse.ok) {
