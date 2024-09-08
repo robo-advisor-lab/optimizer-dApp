@@ -38,10 +38,18 @@ const Home: NextPage = () => {
                 generating trust for investors.
               </h2>
             </div>
-            <div>
-              <button className="btn btn-lg sm:btn-sm md:btn-md lg:btn-lg bg-slate-400 justify-end">
-                Let Our ML Model Optimize Your Portfolio 24/7
-              </button>
+            <div className="grid grid-cols-2">
+              <a
+                className="rounded"
+                href="https://studio.tableland.xyz/d9j9v/smart-porfolios/default/predictions_11155111"
+              >
+                <button className="btn btn-lg sm:btn-sm md:btn-md lg:btn-lg bg-slate-400 justify-end mt-36 p-5">
+                  Tableland verify data on-chain
+                </button>
+              </a>
+              <div>
+                <Image src="/i-8.png" alt="Shoes" width={500} height={300} />
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">

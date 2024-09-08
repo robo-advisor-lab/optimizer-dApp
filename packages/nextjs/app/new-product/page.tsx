@@ -93,15 +93,15 @@ const Page = () => {
           <div className="md:w-1/2">
             <div className="bg-blue-100 px-6 py-4 mt-3 rounded-lg">
               <h2 className="text-4xl font-bold mb-4">DAO Governance Parameters</h2>
-              <p>¿Cón que cripto prefeires trabajar?</p>
+              <p>Select cryptocurrencies</p>
               <FormGroup>
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Label" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="SOL" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="ETH" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="USDC" />
+                <FormControlLabel control={<Checkbox defaultChecked />} label="TON" />
               </FormGroup>
               <div className="flex gap-3">
-                <p>Dirección Cripto</p>
+                <p>Address</p>
                 <div
                   className="bg-blue-300 text-blue-800 px-3 rounded-full flex items-center justify-center cursor-pointer select-none"
                   onClick={handleClickAdressInputPlus}
@@ -116,10 +116,10 @@ const Page = () => {
                 </div>
               </div>
               <div>{elements}</div>
-              <p>Duración</p>
+              <p>Duration</p>
               <Box sx={{ minWidth: 120 }}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Duracion</InputLabel>
+                  <InputLabel id="demo-simple-select-label">Duration</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
@@ -133,10 +133,10 @@ const Page = () => {
                   </Select>
                 </FormControl>
               </Box>
-              <p>Frecuencia</p>
+              <p>Rebalancing frequency</p>
               <Box sx={{ minWidth: 120 }}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Frecuencia</InputLabel>
+                  <InputLabel id="demo-simple-select-label">Rebalancing frequency</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"

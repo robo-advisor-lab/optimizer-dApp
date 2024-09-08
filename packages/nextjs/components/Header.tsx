@@ -115,7 +115,7 @@ export const Header = () => {
       </div>
       <div className="">
         <a href="/new-product">
-          <button className="btn btm-nav-xs sm:btn-sm md:btn-md  ">?</button>
+          <button className="btn btm-nav-xs sm:btn-sm md:btn-md  ">VOTE </button>
         </a>
       </div>
       <div className="navbar-end flex-grow mr-4">
