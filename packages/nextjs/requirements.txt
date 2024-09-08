@@ -1,2 +1,15 @@
-numpy==1.26.0
-Flask==3.0.1
+numpy 
+Flask 
+stable-baselines3
+gymnasium 
+plotly 
+pandas 
+requests 
+yfinance 
+matplotlib 
+scikit-learn 
+pytz 
+python-dotenv 
+APScheduler 
+diskcache 
+flipside
