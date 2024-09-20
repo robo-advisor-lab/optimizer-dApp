@@ -71,16 +71,22 @@ def to_time(df):
 
 def clean_prices(prices_df):
     print('cleaning prices')
+    # Pivot the dataframe
+    prices_df = prices_df.drop_duplicates(subset=['hour', 'symbol'])
     prices_df_pivot = prices_df.pivot(
         index='hour',
         columns='symbol',
         values='price'
-        )
+    )
     prices_df_pivot = prices_df_pivot.reset_index()
-    prices_df_pivot.columns = [f'{col[0]}_{col[1]}' for col in prices_df_pivot.columns]
-    prices_df_pivot.rename(columns={"h_o":"dt","W_B":"BTC Price","W_E":"ETH Price"}, inplace=True)
-    print(f'cleaned prices: {prices_df}')
+
+    # Rename the columns by combining 'symbol' with a suffix
+    prices_df_pivot.columns = ['hour'] + [f'{col}_Price' for col in prices_df_pivot.columns[1:]]
+    
+    print(f'cleaned prices: {prices_df_pivot}')
     return prices_df_pivot
+
+
 
 def calculate_cumulative_return(portfolio_values_df, col):
     """

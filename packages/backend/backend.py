@@ -31,7 +31,7 @@ import torch
 from python_scripts.utils import set_random_seed, calculate_cumulative_return, calculate_cagr, calculate_beta, fetch_and_process_tbill_data, flipside_api_results, set_global_seed, normalize_asset_returns, prepare_data_for_simulation
 # from python_scripts.data_processing import data_processing
 from python_scripts.data_cleaning import data_cleaning
-from python_scripts.model import Portfolio
+from python_scripts.testnet_model import Portfolio
 from sql_scripts.queries import live_prices
 
 from flask import Flask, render_template, request, jsonify
@@ -51,7 +51,7 @@ price_cols = ['ETH Price',
             'BTC Price']
 cache = Cache('cache_dir')
 # historical_data = pd.DataFrame()
-historical_port_values = pd.DataFrame()
+# historical_port_values = pd.DataFrame()
 # model_actions = pd.DataFrame()
 # last_rebalance_time = None
 
@@ -69,6 +69,7 @@ def update_historical_data(live_comp):
     historical_data = pd.concat([historical_data, new_data]).reset_index(drop=True)
     historical_data.drop_duplicates(subset='date', keep='last', inplace=True)
     cache.set('historical_data', historical_data)
+    print(f"cache:{cache.get('historical_data')}")
 
 def update_portfolio_data(values):
     global historical_port_values
@@ -90,6 +91,8 @@ def update_model_actions(actions):
     cache.set('model_actions', model_actions)  
 
 print(f'historical Port vals: {historical_port_values}')
+print(f'historical comp: {historical_data}')
+
 
 def create_app():
     app = Flask(__name__)
@@ -102,12 +105,28 @@ def create_app():
 
     @app.route('/run-model', methods=['POST'])
     def run_model():
+        # Receive latest composition and update DF; front-fill/back-fill if necessary (only triggered once per 24 hours)
+        # data = request.get_json()  # Ensure you're extracting data correctly
+        # live_comp = data['initial_holdings']
+        # print(f'rebalance initial holdings {initial_holdings}')
+
+        today_utc = dt.datetime.now(dt.timezone.utc) - timedelta(days=1)
+        formatted_today_utc = today_utc.strftime('%Y-%m-%d %H:00:00') 
+
+        # live_comp = {
+        #     "date": formatted_today_utc,
+        #     "ETH": live_comp['ETH'],
+        #     "BTC": live_comp['BTC'],
+        # }
+        # print(f'live comp: {live_comp}')
+
+        # update_historical_data(live_comp)
         seed=20
-        today_utc = dt.datetime.now(dt.timezone.utc) 
-        # today_utc = dt.datetime.now(dt.timezone.utc) - timedelta(hours=2)
+        # today_utc = dt.datetime.now(dt.timezone.utc) 
+        
 
     # Format the UTC time
-        formatted_today_utc = today_utc.strftime('%Y-%m-%d %H:00:00') 
+        # formatted_today_utc = today_utc.strftime('%Y-%m-%d %H:00:00') 
         print(f'today: {formatted_today_utc}')
 
         flipside_api_key = os.getenv("FLIPSIDE_API_KEY")
@@ -127,7 +146,16 @@ def create_app():
         prices_df.set_index('hour', inplace=True)
 
         model = PPO.load("eth_btc_model")
-        env = Portfolio(prices_df[price_cols], hold_cash=False, seed=seed, rebalance_frequency=1)
+        # env = Portfolio(prices_df[price_cols], hold_cash=False, seed=seed, rebalance_frequency=1)
+        test_data = {
+            "ETH":20,
+            "BTC":1
+        }
+        test_data_df = pd.DataFrame([test_data])
+
+        print(f'test data: {test_data}')
+        env = Portfolio(prices_df[price_cols], compositions=test_data_df, seed=seed, rebalance_frequency=1)
+
         set_global_seed(env)
 
         states = []
@@ -208,14 +236,18 @@ def create_app():
         # portfolio_values_df.index = portfolio_values_df.index.tz_localize(None)
 
         print(f'portfolio_values_df: {portfolio_values_df}')
+        print(f'first portfolio_values_df: {portfolio_values_df.values[0]}')
 
 
-        norm_prices = normalize_asset_returns(prices_df, portfolio_values_df.index.min(),portfolio_values_df.index.max())
+        norm_prices = normalize_asset_returns(prices_df, portfolio_values_df.index.min(),portfolio_values_df.index.max(), portfolio_values_df['Portfolio_Value'].iloc[0])
         norm_prices.set_index('ds', inplace=True)
+
+        print(f'norm_prices: {norm_prices}')
 
         norm_prices
 
         eth_return = calculate_cumulative_return(norm_prices, 'normalized_ETH')
+        print(f'eth return: {eth_return}')
         btc_return = calculate_cumulative_return(norm_prices, 'normalized_BTC')
 
         excess_return_btc = portfolio_return - btc_return
