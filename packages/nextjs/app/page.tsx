@@ -1,10 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
@@ -12,63 +10,78 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 pt-10">
-        <div className="px-5 items-center mt-40">
-          <div>
-            <h1 className="text-center">
-              <span className="block text-2xl mb-2">Welcome to</span>
-              <span className="block text-4xl font-bold">SMART PORTFOLIOS</span>
-            </h1>
-            <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-              <p className="my-2 font-medium">Connected Address:</p>
-              <Address address={connectedAddress} />
-            </div>
-            <p className="text-center  block text-2xl font-bold">
-              <h1> Explore Data-Driven DeFi Investing </h1>
-            </p>
-          </div>
-        </div>
-        <div className="px-5">
-          <div className="card bg-base-100 w-96 shadow-xl">
-            <figure className="px-10 pt-10">
-              <Image src="/i-4.jpeg" alt="Investing" width={300} height={200} className="rounded-xl" />
-            </figure>
-            <div className="card-body items-center text-center">
-              <h2 className="card-title">
-                Make the leap to Web3. Invest in BTC/ETH and discover the future of decentralized finance!
-              </h2>
-
-              <div className="card-actions">
-                <a href="/information">
-                  <button className="btn btn-primary">Buy Now</button>
-                </a>
+      <div className="">
+        <div>
+          <div className="hero bg-base-200 ">
+            <div className="hero-content text-center ">
+              <div className="px-5 items-center ">
+                <div>
+                  <h1 className="text-center">
+                    <span className="block text-2xl mb-2">Welcome to</span>
+                    <span className="block text-6xl font-bold">SMART PORTFOLIOS</span>
+                  </h1>
+                  <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
+                    <p className="my-2 font-medium">Connected Address:</p>
+                    <Address address={connectedAddress} />
+                  </div>
+                  <p className="text-center  block text-2xl font-bold">
+                    <h1> Explore Data-Driven DeFi Investing </h1>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 ">
-        <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-          <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-            <BugAntIcon className="h-8 w-8 fill-secondary" />
-            <p>
-              Tinker with your smart contract using the{" "}
-              <Link href="/debug" passHref className="link">
-                Debug Contracts
-              </Link>{" "}
-              tab.
-            </p>
+          <div className=" items-center justify-center mb-10 p-10 grid grid-cols-2">
+            <div>
+              <h2 className="font-bold text-2xl">
+                All transactions and decisions made by the model are visible and verifiable on the blockchain,
+                generating trust for investors.
+              </h2>
+            </div>
+            <div className="grid grid-cols-2">
+              <a
+                className="rounded"
+                href="https://studio.tableland.xyz/d9j9v/smart-porfolios/default/predictions_11155111"
+              >
+                <button className="btn btn-lg sm:btn-sm md:btn-md lg:btn-lg bg-slate-400 justify-end mt-36 p-5">
+                  Tableland verify data on-chain
+                </button>
+              </a>
+              <div>
+                <Image src="/i-8.png" alt="Shoes" width={500} height={300} />
+              </div>
+            </div>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 place-items-center">
+            <div className="card bg-base-100 w-96 shadow-xl">
+              <figure>
+                <Image src="/pc-1.jpeg" alt="Shoes" width={500} height={300} />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">BTC/ETH</h2>
+                <p>For traditional and institutional investors</p>
+                <div className="card-actions justify-end">
+                  <a href="/products">
+                    <button className="btn btn-primary">Buy Now</button>
+                  </a>
+                </div>
+              </div>
+            </div>
 
-          <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-            <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-            <p>
-              Explore your local transactions with the{" "}
-              <Link href="/blockexplorer" passHref className="link">
-                Block Explorer
-              </Link>{" "}
-              tab.
-            </p>
+            <div className="card bg-base-100 w-96 shadow-xl">
+              <figure>
+                <Image src="/rwa-1.jpeg" alt="Shoes" width={500} height={300} />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">Propose a new product</h2>
+                <p>Experience the Power of create new investment products</p>
+                <div className="card-actions justify-end">
+                  <a href="/new-product">
+                    <button className="btn btn-primary">Buy Now</button>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

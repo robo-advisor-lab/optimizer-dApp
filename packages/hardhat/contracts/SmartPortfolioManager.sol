@@ -18,14 +18,12 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         UpdateVotingPeriod
     }
 
-    struct Vehicle {
-        uint256 id;
-        string name;
-        uint256 nav;
-        uint256 totalSupply;
-        uint256 lastRebalance;
-        mapping(address => uint256) balances;
-    }
+struct Vehicle {
+    uint256 id;
+    string name;
+    address vehicleAddress;
+    bool active;
+}
 
     struct Proposal {
         uint256 id;
@@ -147,6 +145,15 @@ contract SmartPortfolioManager is ERC20, ReentrancyGuard, Pausable, Ownable {
         
         emit ProposalExecuted(proposalId);
     }
-
+    
+    function addVehicle(address vehicleAddress, string memory name) external onlyOwner {
+        vehicles[nextVehicleId] = Vehicle({
+            id: nextVehicleId,
+            name: name,
+            vehicleAddress: vehicleAddress,
+            active: true
+        });
+        nextVehicleId++;
+    }
     // Additional helper functions and admin functions would be implemented here
 }

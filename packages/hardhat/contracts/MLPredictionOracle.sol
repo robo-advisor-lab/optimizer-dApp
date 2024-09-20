@@ -9,8 +9,8 @@ contract MLPredictionOracle is AccessControl, Pausable {
 
     struct Prediction {
         uint256 timestamp;
-        mapping(address => uint256) assetWeights; // Asset address to weight (in basis points)
-        bytes32 tablelandHash; // Hash of the Tableland row containing detailed prediction data
+        mapping(address => uint256) assetWeights;
+        bytes32 tablelandHash;
     }
 
     Prediction public latestPrediction;
@@ -24,8 +24,8 @@ contract MLPredictionOracle is AccessControl, Pausable {
     }
 
     function updatePrediction(
-        address[] memory assets, 
-        uint256[] memory weights, 
+        address[] memory assets,
+        uint256[] memory weights,
         bytes32 tablelandHash
     ) external onlyRole(UPDATER_ROLE) whenNotPaused {
         require(assets.length == weights.length, "Arrays length mismatch");
@@ -46,21 +46,13 @@ contract MLPredictionOracle is AccessControl, Pausable {
         emit PredictionUpdated(block.timestamp, tablelandHash);
     }
 
-    function getPrediction(address asset) external view returns (uint256, uint256, bytes32) {
-        return (
-            latestPrediction.assetWeights[asset],
-            latestPrediction.timestamp,
-            latestPrediction.tablelandHash
-        );
-    }
-
-    function getLatestPredictionData() external view returns (uint256, bytes32) {
-        return (latestPrediction.timestamp, latestPrediction.tablelandHash);
-    }
+function getLatestPrediction(address asset) external view returns (uint256, uint256, bytes32) {
+    return (latestPrediction.assetWeights[asset], latestPrediction.timestamp, latestPrediction.tablelandHash);
+}
 
     function verifyPrediction(
-        address[] memory assets, 
-        uint256[] memory weights, 
+        address[] memory assets,
+        uint256[] memory weights,
         bytes32 tablelandHash
     ) external view returns (bool) {
         if (tablelandHash != latestPrediction.tablelandHash) {

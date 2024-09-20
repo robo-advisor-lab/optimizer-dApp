@@ -2765,7 +2765,7 @@ const deployedContracts = {
       },
     },
     InvestmentVehicle: {
-      address: "0x61257521c8DB4C14Bd98AB713430804e0ADB18Ca",
+      address: "0xF2F4994c8b913D70B258Db580F55b2A424074551",
       abi: [
         {
           inputs: [
@@ -3459,7 +3459,7 @@ const deployedContracts = {
       },
     },
     MLPredictionOracle: {
-      address: "0xfEda0Bff2688aEDEB9830117809b2C9E33c9177C",
+      address: "0xE5AA7247818A35001050a2c4CAC8412c79d31359",
       abi: [
         {
           inputs: [],
@@ -3657,24 +3657,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "getLatestPredictionData",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
           inputs: [
             {
               internalType: "address",
@@ -3682,7 +3664,7 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "getPrediction",
+          name: "getLatestPrediction",
           outputs: [
             {
               internalType: "uint256",
@@ -3929,7 +3911,7 @@ const deployedContracts = {
       },
     },
     SmartPortfolioManager: {
-      address: "0x65C7A92691ce180c32ac316bB6237EE31595408C",
+      address: "0xE4e26b4F601335d78fb93DfF562Deca8C7163687",
       abi: [
         {
           inputs: [
@@ -4336,6 +4318,24 @@ const deployedContracts = {
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "vehicleAddress",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+          ],
+          name: "addVehicle",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -4763,19 +4763,14 @@ const deployedContracts = {
               type: "string",
             },
             {
-              internalType: "uint256",
-              name: "nav",
-              type: "uint256",
+              internalType: "address",
+              name: "vehicleAddress",
+              type: "address",
             },
             {
-              internalType: "uint256",
-              name: "totalSupply",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastRebalance",
-              type: "uint256",
+              internalType: "bool",
+              name: "active",
+              type: "bool",
             },
           ],
           stateMutability: "view",
