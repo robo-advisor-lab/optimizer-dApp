@@ -18,7 +18,13 @@ WITH addresses AS (
         (LOWER('0xBe9895146f7AF43049ca1c1AE358B0541Ea49704')),--cbeth,
         (LOWER('0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38')),--oseth,
         (LOWER('0x8236a87084f8B84306f72007F36F2618A5634494')),--lbtc
-        (LOWER('0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee'))--weeth
+        (LOWER('0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee')),--weeth
+        (LOWER('0xf951e335afb289353dc249e82926178eac7ded78')),--sweth
+        (LOWER('0xa35b1b31ce002fbf2058d22f30f95d405200a15b')),--ethx
+        (LOWER('0x8c1bed5b9a0928467c9b1341da1d7bd5e10b6549')),--LSETH
+        (LOWER('0xe95a203b1a91a908f9b9ce46459d101078c2c3cb')),--ANKRETH 
+        (LOWER('0x856c4efb76c1d1ae02e20ceb03a2a6a08b0b8dc3'))--OETH 
+
 
     ) AS tokens(column1)
 )

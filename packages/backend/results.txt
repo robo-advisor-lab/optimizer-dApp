@@ -1,0 +1,33 @@
+
+
+seed = 20
+rebal freq = 24
+21/09/2023 through 20/09/2024
+eth_btc Cumulative Return: 92.66%
+lst_index Cumulative Return: 54.67%
+dao_advisor Cumulative Return: 156.42%
+
+seed = 20
+rebal freq = 168
+21/09/2023 through 20/09/2024
+eth_btc Cumulative Return: 111.44%
+lst_index Cumulative Return: 58.28%
+dao_advisor Cumulative Return: 64.81%
+
+seed = 20
+rebal freq = 48
+21/09/2023 through 20/09/2024
+eth_btc Cumulative Return: 54.73%
+lst_index Cumulative Return: 47.50%
+dao_advisor Cumulative Return: 97.99%
+
+seed: 20
+rebalance_frequency:12
+21/09/2023 through 20/09/2024
+normalized value:100
+Days:365
+timesteps: 10000
+eth_btc Cumulative Return: 23.50%
+lst_index Cumulative Return: 46.38%
+dao_advisor Cumulative Return: 177.99%
+

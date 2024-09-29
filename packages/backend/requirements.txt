@@ -243,3 +243,4 @@ xlrd
 yarl
 yfinance
 zipp
+dune-client

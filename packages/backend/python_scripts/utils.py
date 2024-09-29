@@ -86,22 +86,28 @@ def clean_prices(prices_df):
     print(f'cleaned prices: {prices_df_pivot}')
     return prices_df_pivot
 
-
-
-def calculate_cumulative_return(portfolio_values_df, col):
+def calculate_cumulative_return(portfolio_values_df):
     """
-    Calculate the cumulative return of the portfolio.
+    Calculate the cumulative return for each column in the portfolio.
     
     Parameters:
-    portfolio_values_df (pd.DataFrame): DataFrame with 'Portfolio_Value' column
+    portfolio_values_df (pd.DataFrame): DataFrame with columns representing portfolio values
     
     Returns:
-    float: Cumulative return of the portfolio
+    pd.DataFrame: DataFrame with cumulative returns for each column
     """
-    initial_value = portfolio_values_df[col].iloc[0]
-    final_value = portfolio_values_df[col].iloc[-1]
-    cumulative_return = (final_value / initial_value) - 1
-    return cumulative_return
+    cumulative_returns = {}
+
+    for col in portfolio_values_df.columns:
+        initial_value = portfolio_values_df[col].iloc[0]
+        final_value = portfolio_values_df[col].iloc[-1]
+        cumulative_return = (final_value / initial_value) - 1
+        cumulative_returns[col] = cumulative_return
+
+    # Convert the dictionary to a DataFrame
+    cumulative_returns_df = pd.DataFrame(cumulative_returns, index=['Cumulative_Return'])
+    
+    return cumulative_returns_df
 
 def calculate_cagr(history):
     print(f'cagr history: {history}')
